@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.8, 3.9]
+        python-version: [3.8]
 
     steps:
     - uses: actions/checkout@v2
@@ -35,10 +35,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements-test.txt
 
-    - name: Format with black
-      run: |
-        black .
-
     - name: Refactor with pyupgrade
       run: |
         pyupgrade
@@ -52,12 +48,12 @@ jobs:
 
     - name: Check types
       run: |
-        mypy . --ignore-missing-imports
+        mypy .
 
-    - name: notification
-      if: always()
-      uses: xinthink/action-telegram@v1.1
-      with:
-        botToken: ${{ secrets.BOT_TOKEN }}
-        chatId: ${{ secrets.CHAT_ID }}
-        jobStatus: ${{ job.status }}
+#    - name: notification
+#      if: always()
+#      uses: xinthink/action-telegram@v1.1
+#      with:
+#        botToken: ${{ secrets.BOT_TOKEN }}
+#        chatId: ${{ secrets.CHAT_ID }}
+#        jobStatus: ${{ job.status }}
