@@ -52,9 +52,10 @@ jobs:
 
     - name: Check types
       run: |
-        mypy . --ignore-missing-imports --no-incremental --html-report .github/reports
+        mypy . --ignore-missing-imports
 
     - name: notification
+      if: always()
       uses: xinthink/action-telegram@v1.1
       with:
         botToken: ${{ secrets.BOT_TOKEN }}
