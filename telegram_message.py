@@ -14,7 +14,7 @@ steps_id_mapping = {
     "7": "Send result to telegram",
 }
 steps_string_json: str = os.getenv("STEPS_CONTEXT")
-steps = json.loads(steps_string_json)
+steps: dict = json.loads(steps_string_json)
 
 
 def send_telegram():
@@ -28,7 +28,7 @@ def send_telegram():
     project_name = os.getenv("GITHUB_REPOSITORY")
     commit_hash = os.getenv("GITHUB_SHA")
     for step in steps:
-        if steps[step].get("failed"):
+        if not steps[step].get("success"):
             result = "with error"
             error = True
             step = steps_id_mapping[step]
