@@ -54,5 +54,5 @@ def send_telegram():
 
 
 if __name__ == "__main__":
-    send_telegram()
+    # send_telegram()
     print(os.environ)
