@@ -5,11 +5,11 @@ from html.parser import HTMLParser
 class HTMLFilter(HTMLParser, ABC):
     """
     A simple no dependency HTML -> TEXT converter.
-    Usage:
-          str_output = HTMLFilter.convert_html_to_text(html_input)
+    Usage: str_output = HTMLFilter.convert_html_to_text(html_input).
     """
+
     def __init__(self, *args, **kwargs):
-        self.text = ''
+        self.text = ""
         self.in_body = False
         super().__init__(*args, **kwargs)
 
@@ -21,9 +21,9 @@ class HTMLFilter(HTMLParser, ABC):
         if tag.lower() == "body":
             self.in_body = False
 
-    def handle_data(self, data):
+    def handle_data(self, text_data):
         if self.in_body:
-            self.text += data
+            self.text += text_data
 
     @classmethod
     def convert_html_to_text(cls, html: str) -> str:

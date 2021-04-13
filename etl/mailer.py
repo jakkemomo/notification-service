@@ -4,7 +4,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from typing import List
 
-from etl.settings import settings, logger
+from etl.settings import logger, settings
 
 config = settings.mail_service
 SENDER = config.sender
