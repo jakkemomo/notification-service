@@ -15,8 +15,9 @@ def enrich_email_with_email_addresses(recipients: List) -> List:
     :param recipients: List of user ids.
     :return: List of user emails.
     """
-    data: Dict = get_emails_from_user_ids(recipients)
-    emails: List = data.get("emails", [])
+
+    email_data: Dict = get_emails_from_user_ids(recipients)
+    emails: List = email_data.get("emails", [])
     return emails
 
 
@@ -26,6 +27,7 @@ def get_template_by_name(message_data: dict) -> EmailMessage:
     :param message_data: Dictionary with values from Notify API.
     :return: EmailMessage object with template data loaded from Django App.
     """
+
     template_name = message_data.get("template_name")
     # go to django app to get template
     template = get_template(template_name)
@@ -45,6 +47,7 @@ def enrich_email_with_template_vals(message: EmailMessage):
     :param message: Message object.
     :return: Message object with enriched values in template variable.
     """
+
     # grab template data and try to enter it in template
     template_data = message.template_data
     template: str = message.template
@@ -68,6 +71,7 @@ def send_email_message(message: EmailMessage, sleep_time: int = 0) -> None:
     :param sleep_time: optional time for delay.
     :return: None.
     """
+
     sleep(sleep_time)
     send_mail(
         recipients=message.recipients,
