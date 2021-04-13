@@ -51,11 +51,11 @@ if __name__ == "__main__":
     # The subject line of the email.
     SUBJECT = "Amazon SES Test (Python smtplib)"
     # The email body for recipients with non-HTML email clients.
-    BODY_TEXT = (
-        "Amazon SES Test\r\n"
-        "This email was sent through the Amazon SES SMTP "
-        "Interface using the Python smtplib package."
-    )
+    BODY_TEXT = """
+        Amazon SES Test\r\n
+        This email was sent through the Amazon SES SMTP
+        Interface using the Python smtplib package.
+        """
     # The HTML body of the email.
     BODY_HTML = """<html>
     <head></head>
