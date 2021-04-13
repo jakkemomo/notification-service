@@ -4,7 +4,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from typing import List
 
-from etl.settings import settings
+from etl.settings import settings, logger
 
 config = settings.mail_service
 SENDER = config.sender
@@ -41,9 +41,9 @@ def send_mail(recipients: List, subject: str, body_text: str, body_html: str) ->
         server.close()
     # Display an error message if something goes wrong.
     except Exception as e:
-        print("Error: ", e)
+        logger.error("Error: ", e)
     else:
-        print("Email sent!")
+        logger.info("Email sent!")
 
 
 if __name__ == "__main__":

@@ -6,6 +6,10 @@ from etl.settings import settings, logger
 
 
 def get_template(template_name: str) -> Dict:
+    """
+    :param template_name: Email template code name
+    :return: Json Data with string representation of html template
+    """
     host = settings.template_storage.host
     port = settings.template_storage.port
     try:
