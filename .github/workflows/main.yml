@@ -33,7 +33,7 @@ jobs:
 
     - name: Set up lxml libraries for reporting
       run: |
-        apt-get update && apt-get install -y libxml2-dev libxslt-dev python3-dev gcc python-lxml
+        sudo apt-get update && apt-get install -y libxml2-dev libxslt-dev python3-dev gcc python-lxml
 
     - name: Install dependencies
       run: |
