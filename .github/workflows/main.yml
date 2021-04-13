@@ -64,5 +64,10 @@ jobs:
         python telegram_message.py
       env:
         STEPS_CONTEXT: ${{ toJSON(steps) }}
+        JOB_CONTEXT: ${{ toJSON(job) }}
+        RUNNER_CONTEXT: ${{ toJSON(runner) }}
+        STRATEGY_CONTEXT: ${{ toJSON(strategy) }}
+        MATRIX_CONTEXT: ${{ toJSON(matrix) }}
+        GITHUB_CONTEXT: ${{ toJSON(github) }}
         BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
         CHAT_ID: ${{ secrets.CHAT_ID }}
