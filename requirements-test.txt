@@ -2,5 +2,3 @@ black==20.8b.1
 pyupgrade==2.11.0
 isort==5.8.0
 mypy==0.812
-lxml==4.4.1
-flake8-html==0.4.1
