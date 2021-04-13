@@ -33,7 +33,7 @@ jobs:
 
     - name: Set up lxml libraries for reporting
       run: |
-        sudo apt-get update && apt-get install -y libxml2-dev libxslt-dev python3-dev gcc python-lxml
+        sudo apt-get update && sudo apt-get install -y libxml2-dev libxslt-dev python3-dev gcc python-lxml
 
     - name: Install dependencies
       run: |
@@ -55,10 +55,10 @@ jobs:
       run: |
         mypy .
 
-    - name: notification
-      if: always()
-      uses: xinthink/action-telegram@v1.1
-      with:
-        botToken: ${{ secrets.BOT_TOKEN }}
-        chatId: ${{ secrets.CHAT_ID }}
-        jobStatus: ${{ job.status }}
+#    - name: notification
+#      if: always()
+#      uses: xinthink/action-telegram@v1.1
+#      with:
+#        botToken: ${{ secrets.BOT_TOKEN }}
+#        chatId: ${{ secrets.CHAT_ID }}
+#        jobStatus: ${{ job.status }}
