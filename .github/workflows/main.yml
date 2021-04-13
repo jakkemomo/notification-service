@@ -29,8 +29,6 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
-      env:
-        SETUP_PYTHON: ${{ job.status }}
 
 #    - name: Set up lxml libraries for reporting
 #      run: |
@@ -54,13 +52,11 @@ jobs:
 
     - name: wemake-python-styleguide
       uses: wemake-services/wemake-python-styleguide@0.15.2
-      run: |
-        echo "wmpsg_result=${{ job.status }}" >> $GITHUB_ENV
 
     - name: Check types
       run: |
         mypy .
-        echo "check_type_result=${{ job.status }}" >> $GITHUB_ENV
+        echo "mypy_result=${{ job.status }}" >> $GITHUB_ENV
 
     - name: Send result to telegram
       if: always()
