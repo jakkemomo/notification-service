@@ -15,7 +15,9 @@ def get_emails_from_user_ids(recipients: List) -> Dict:
         return response.json()
     except requests.exceptions.Timeout:
         logger.error("Timeout while connecting to Auth service!")
+        return {}
     except requests.exceptions.TooManyRedirects:
         logger.error("Bad url for Auth service!")
+        return {}
     except requests.exceptions.RequestException as e:
         raise SystemExit(e)
