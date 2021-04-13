@@ -41,7 +41,7 @@ def get_template_by_name(data: dict) -> EmailMessage:
 def enrich_email_with_template_vals(message: EmailMessage):
     # grab template data and try to enter it in template
     data = message.template_data
-    template = message.template
+    template: str = message.template
 
     # Swap Binary substring
     # Using translate()
@@ -49,7 +49,7 @@ def enrich_email_with_template_vals(message: EmailMessage):
         temp = str.maketrans(f"{{ {key} }}", str(value))
         template = template.translate(temp)
     message.body_html = template
-    body_text = HTMLFilter.convert_html_to_text(template)
+    body_text: str = HTMLFilter.convert_html_to_text(template)
     message.body_text = body_text
     return message
 

@@ -14,7 +14,9 @@ def get_template(template_name: str) -> Dict:
         return response.json()
     except requests.exceptions.Timeout:
         logger.error("Timeout while connecting to Template Storage service!")
+        return {}
     except requests.exceptions.TooManyRedirects:
         logger.error("Bad url for Template Storage service!")
+        return {}
     except requests.exceptions.RequestException as e:
         raise SystemExit(e)
