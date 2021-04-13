@@ -1,17 +1,21 @@
 import uvicorn
 from fastapi import FastAPI
+from motor.motor_asyncio import AsyncIOMotorClient
+
+from notification_api.src.db import mongo
+from notification_api.src.settings import MONGO_URI
 
 app = FastAPI()
 
 
 @app.on_event("startup")
 async def startup():
-    pass
+    mongo.mongo_conn = AsyncIOMotorClient(MONGO_URI)
 
 
 @app.on_event("shutdown")
 async def shutdown():
-    pass
+    mongo.mongo_conn.close()
 
 
 @app.get("/")
