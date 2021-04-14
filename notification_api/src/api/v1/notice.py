@@ -1,27 +1,15 @@
-from typing import List, Optional
+from typing import List
 
 from fastapi import APIRouter, Depends
-from pydantic import BaseModel, parse_obj_as
+from pydantic import parse_obj_as
 
+from notification_api.src.models.api import NoticeIn, NoticeOut
 from notification_api.src.services.notice import (
     NoticeService,
     get_notice_service,
 )
 
 notice_api = APIRouter()
-
-
-class NoticeOut(BaseModel):
-    id: str
-    type: str
-    name: str
-    description: Optional[str]
-
-
-class NoticeIn(BaseModel):
-    type: str
-    name: str
-    description: Optional[str]
 
 
 @notice_api.get("/notice")
