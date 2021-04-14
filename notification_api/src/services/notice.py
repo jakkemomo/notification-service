@@ -1,12 +1,15 @@
 import logging
 from typing import List, Optional
 
+from fastapi import Depends
 from motor.core import AgnosticCollection as MongoCollection
 from motor.core import AgnosticDatabase as MongoDatabase
 from pydantic import parse_obj_as
 from pymongo.results import DeleteResult, InsertOneResult, UpdateResult
 
+from notification_api.src.db.mongo import get_mongo_conn
 from notification_api.src.models.db import Notice
+from notification_api.src.settings import MONGO_DB
 
 logger = logging.getLogger(__name__)
 
@@ -42,7 +45,7 @@ class NoticeService:
 
     async def get_all(self) -> List[Notice]:
         """ Получить полный список уведомлений """
-        res = await self.collection.find({})
+        res = await self.collection.find({}).to_list(None)
         return parse_obj_as(List[Notice], res)
 
     async def create(self, notice_type: str, name: str, description: str = None):
@@ -53,10 +56,13 @@ class NoticeService:
             description=description,
         )
 
-        res: InsertOneResult = await self.collection.insert_one(new_notice.dict())
+        res: InsertOneResult = await self.collection.insert_one(
+            new_notice.dict(by_alias=True)
+        )
         if not res.inserted_id:
             logger.warning(
-                "New notice is not created. Doc: [%s]" % (new_notice.dict(),)
+                "New notice is not created. Doc: [%s]"
+                % (new_notice.dict(by_alias=True),)
             )
 
     async def update(
@@ -69,7 +75,7 @@ class NoticeService:
             description=description,
         )
 
-        res: UpdateResult = await self.collection.find_one_and_update(
+        res: UpdateResult = await self.collection.update_one(
             {"_id": notice_id},
             {"$set": updated_notice.dict()},
         )
@@ -82,3 +88,8 @@ class NoticeService:
         res: DeleteResult = await self.collection.delete_one({"_id": notice_id})
         if not res.deleted_count:
             logger.info("Notice [%s] not found." % notice_id)
+
+
+def get_notice_service(mongo_conn=Depends(get_mongo_conn)) -> NoticeService:
+    mongo_db = mongo_conn[MONGO_DB]
+    return NoticeService(mongo_db)

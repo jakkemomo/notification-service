@@ -2,10 +2,12 @@ import uvicorn
 from fastapi import FastAPI
 from motor.motor_asyncio import AsyncIOMotorClient
 
+from notification_api.src.api.v1 import notice
 from notification_api.src.db import mongo
 from notification_api.src.settings import MONGO_URI
 
 app = FastAPI()
+app.include_router(notice.notice_api)
 
 
 @app.on_event("startup")
