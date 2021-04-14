@@ -8,9 +8,9 @@ from notification_api.src.settings import MONGO_URI
 
 app = FastAPI()
 
-app.include_router(notice.notice_api, prefix="admin", tags=["admin"])
-app.include_router(user_notice.user_notice_api, prefix="user", tags=["user"])
-app.include_router(service_notice.service_api, prefix="service", tags=["service"])
+app.include_router(notice.notice_api, prefix="/admin", tags=["admin"])
+app.include_router(user_notice.user_notice_api, prefix="/user", tags=["user"])
+app.include_router(service_notice.service_api, prefix="/service", tags=["service"])
 
 
 @app.on_event("startup")
