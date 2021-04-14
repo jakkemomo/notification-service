@@ -20,8 +20,8 @@ class Migration(migrations.Migration):
                 ('subject', models.CharField(max_length=255)),
             ],
             options={
-                'verbose_name': 'Шаблон письма',
-                'verbose_name_plural': 'Шаблоны писем',
+                'verbose_name': 'Mail Template',
+                'verbose_name_plural': 'Mail Templates',
             },
         ),
         migrations.CreateModel(
