@@ -16,3 +16,5 @@ class MailTemplateList(generics.ListCreateAPIView):
     serializer_class = MailTemplateSerializer
 
 
+
+
