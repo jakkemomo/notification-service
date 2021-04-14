@@ -1,7 +1,6 @@
 import aio_pika
 import uvicorn
 from fastapi import FastAPI
-
 from notification_api.db import rabbitmq
 from notification_api.settings import RABBIT_URL
 

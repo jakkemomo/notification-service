@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Depends, Response, status
-
 from notification_api.models.api import MessageIn
 from notification_api.services.rabbit import RabbitService, get_rabbit_service
 

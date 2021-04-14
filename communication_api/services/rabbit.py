@@ -1,7 +1,6 @@
 import orjson
 from aio_pika import DeliveryMode, Message, RobustConnection
 from fastapi import Depends
-
 from notification_api.db.rabbitmq import get_rabbit
 from notification_api.settings import EXCHANGE_NAME
 
