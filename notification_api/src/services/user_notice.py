@@ -1,11 +1,15 @@
 import logging
 from typing import List
 
+from fastapi import Depends
 from motor.core import AgnosticCollection as MongoCollection
 from motor.core import AgnosticDatabase as MongoDatabase
+from pydantic import parse_obj_as
 from pymongo.results import InsertOneResult, UpdateResult
 
+from notification_api.src.db.mongo import get_mongo_conn
 from notification_api.src.models.db import NoticeType, UserNoticeSettings
+from notification_api.src.settings import MONGO_DB
 
 logger = logging.getLogger(__name__)
 
@@ -66,7 +70,7 @@ class UserNoticeService:
         res = await self.collection.find_one({"user_id": user_id})
         if not res:
             return []
-        return res["excluded"]
+        return parse_obj_as(List[NoticeType], res["excluded"])
 
     async def _create_new_notice_settings(self, user_id: str, notice_type: str):
         """ Создание нового документа с настройками уведомлений пользователя """
@@ -85,3 +89,8 @@ class UserNoticeService:
                 "User [%s] notice settings is not created. Doc: [%s]"
                 % (user_id, new_doc.dict())
             )
+
+
+def get_user_notice_service(mongo_conn=Depends(get_mongo_conn)) -> UserNoticeService:
+    mongo_db = mongo_conn[MONGO_DB]
+    return UserNoticeService(mongo_db)
