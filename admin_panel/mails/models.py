@@ -11,8 +11,8 @@ class MailTemplate(models.Model):
     subject = models.CharField(max_length=255)
 
     class Meta:
-        verbose_name = _('Шаблон письма')
-        verbose_name_plural = _('Шаблоны писем')
+        verbose_name = _('Mail Template')
+        verbose_name_plural = _('Mail Templates')
         indexes = [
             models.Index(fields=['name']),
         ]
@@ -51,6 +51,7 @@ class GenresParams(models.Model):
 
     class Meta:
         verbose_name = _('Жанр и текст о нём')
+        verbose_name_plural = _('Жанры и тексты')
 
     def __str__(self):
         return " ". join((str(self.viewed_genre_films), self.preferred_genre))
