@@ -8,13 +8,14 @@ def gen_uuid():
     return str(uuid4())
 
 
-class NoticeType(BaseModel):
+class ExcludedNotice(BaseModel):
+    id: str
     type: str
 
 
 class UserNoticeSettings(BaseModel):
     user_id: str
-    excluded: List[NoticeType]
+    excluded: List[ExcludedNotice]
 
 
 class Notice(BaseModel):

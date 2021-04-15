@@ -8,7 +8,12 @@ from pydantic import parse_obj_as
 from pymongo.results import InsertOneResult, UpdateResult
 
 from notification_api.src.db.mongo import get_mongo_conn
-from notification_api.src.models.db import NoticeType, UserNoticeSettings
+from notification_api.src.exceptions import DocAlreadyExists, DocNotFound
+from notification_api.src.models.db import ExcludedNotice, UserNoticeSettings
+from notification_api.src.services.notice import (
+    NoticeService,
+    get_notice_service,
+)
 from notification_api.src.settings import MONGO_DB
 
 logger = logging.getLogger(__name__)
@@ -33,57 +38,73 @@ class UserNoticeService:
 
     COLLECTION_NAME = "user_notices"
 
-    def __init__(self, db: MongoDatabase):
-        self.db = db
-        self.collection: MongoCollection = db[self.COLLECTION_NAME]
+    def __init__(self, db: MongoDatabase, notice_service: NoticeService):
+        self._db = db
+        self._collection: MongoCollection = db[self.COLLECTION_NAME]
+        self._notice_service = notice_service
 
-    async def activate(self, user_id: str, notice_type: str):
-        """ Включить пользователю уведомления данного типа """
-        excluded_notice = NoticeType(type=notice_type)
+    async def activate(self, user_id: str, notice_id: str):
+        """ Включить пользователю уведомление `notice_id` """
 
-        res: UpdateResult = await self.collection.update_one(
+        notice = await self._notice_service.get(notice_id)
+        excluded_notice = ExcludedNotice.parse_obj(notice)
+
+        res: UpdateResult = await self._collection.update_one(
             {"user_id": user_id},
             {"$pull": {"excluded": excluded_notice.dict()}},
         )
-        if not res.modified_count:
+
+        # Так как `user_id` получается из токена, то считаем, что он задан верно.
+        # При выполнении условия считаем, что у пользователя еще не было отключенных
+        # уведомлений, т.е. все уведомления включены.
+        if not res.matched_count or not res.modified_count:
             logger.info(
-                "User [%s] had not the turned off [%s] notice." % (user_id, notice_type)
+                "User [%s] tries to turn on already active [%s] notice."
+                % (user_id, notice_id)
             )
+            raise DocNotFound()
 
-    async def deactivate(self, user_id: str, notice_type: str):
+    async def deactivate(self, user_id: str, notice_id: str):
         """ Отключить у пользователя уведомления данного типа """
-        excluded_notice = NoticeType(type=notice_type)
+        notice = await self._notice_service.get(notice_id)
+        excluded_notice = ExcludedNotice.parse_obj(notice)
 
-        res: UpdateResult = await self.collection.update_one(
+        res: UpdateResult = await self._collection.update_one(
             {"user_id": user_id},
             {"$addToSet": {"excluded": excluded_notice.dict()}},
         )
+
+        # Так как `user_id` получается из токена, то считаем, что он задан верно.
+        # При выполнении условия считаем, что у пользователя еще не было отключенных
+        # уведомлений. Создаем для него новый документ.
+        if not res.matched_count:
+            logger.info(
+                "User [%s] has not any turned notice off. Created a new one." % user_id
+            )
+            await self._create_new_notice_settings(user_id, excluded_notice)
+
         if not res.modified_count:
             logger.info(
-                "User [%s] had not a turned notice off. Creating a new one."
-                % (user_id,)
+                "User [%s] already has the turned notice [%s] off."
+                % (user_id, notice_id)
             )
-            await self._create_new_notice_settings(user_id, notice_type)
+            raise DocAlreadyExists()
 
-    async def get_excluded_notices(self, user_id: str) -> List[NoticeType]:
-        """ Получение типов уведомлений, отключенных пользователем """
-        res = await self.collection.find_one({"user_id": user_id})
+    async def get_excluded_notices(self, user_id: str) -> List[ExcludedNotice]:
+        """ Получение списка уведомлений, отключенных пользователем """
+        res = await self._collection.find_one({"user_id": user_id})
         if not res:
             return []
-        return parse_obj_as(List[NoticeType], res["excluded"])
+        return parse_obj_as(List[ExcludedNotice], res["excluded"])
 
-    async def _create_new_notice_settings(self, user_id: str, notice_type: str):
+    async def _create_new_notice_settings(self, user_id: str, notice: ExcludedNotice):
         """ Создание нового документа с настройками уведомлений пользователя """
         new_doc = UserNoticeSettings(
             user_id=user_id,
-            excluded=[
-                NoticeType(
-                    type=notice_type,
-                )
-            ],
+            excluded=[notice],
         )
 
-        res: InsertOneResult = await self.collection.insert_one(new_doc.dict())
+        res: InsertOneResult = await self._collection.insert_one(new_doc.dict())
         if not res.inserted_id:
             logger.warning(
                 "User [%s] notice settings is not created. Doc: [%s]"
@@ -91,6 +112,9 @@ class UserNoticeService:
             )
 
 
-def get_user_notice_service(mongo_conn=Depends(get_mongo_conn)) -> UserNoticeService:
+def get_user_notice_service(
+    mongo_conn=Depends(get_mongo_conn),
+    notice_service=Depends(get_notice_service),
+) -> UserNoticeService:
     mongo_db = mongo_conn[MONGO_DB]
-    return UserNoticeService(mongo_db)
+    return UserNoticeService(mongo_db, notice_service)
