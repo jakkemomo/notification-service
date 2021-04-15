@@ -1,10 +1,12 @@
 class AppBaseException(Exception):
-    pass
+    def __init(self, msg, *args):
+        super(Exception, self).__init__(*args)
+        self.msg = msg
 
 
 class DocNotFound(AppBaseException):
-    msg = "Document not found"
+    pass
 
 
 class DocAlreadyExists(AppBaseException):
-    msg = "Document exists"
+    pass

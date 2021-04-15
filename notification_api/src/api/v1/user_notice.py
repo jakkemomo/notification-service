@@ -1,8 +1,9 @@
 from typing import List
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import parse_obj_as
 
+from notification_api.src.exceptions import DocAlreadyExists, DocNotFound
 from notification_api.src.models.api import ExcludedNoticeOut
 from notification_api.src.services.user_notice import (
     UserNoticeService,
@@ -29,7 +30,10 @@ async def create_notice(
 ):
     # TODO: User authorization
     user_id = "user-12345"
-    await user_notice_service.activate(user_id, notice_type)
+    try:
+        await user_notice_service.activate(user_id, notice_type)
+    except DocNotFound:
+        raise HTTPException(status.HTTP_404_NOT_FOUND)
 
 
 @user_notice_api.delete("/notice/{notice_type}")
@@ -39,4 +43,9 @@ async def delete_notice(
 ):
     # TODO: User authorization
     user_id = "user-12345"
-    await user_notice_service.deactivate(user_id, notice_type)
+    try:
+        await user_notice_service.deactivate(user_id, notice_type)
+    except DocNotFound:
+        raise HTTPException(status.HTTP_404_NOT_FOUND)
+    except DocAlreadyExists:
+        raise HTTPException(status.HTTP_409_CONFLICT)

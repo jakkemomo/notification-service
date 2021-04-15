@@ -1,8 +1,9 @@
 from typing import List
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import parse_obj_as
 
+from notification_api.src.exceptions import DocAlreadyExists, DocNotFound
 from notification_api.src.models.api import NoticeIn, NoticeOut
 from notification_api.src.services.notice import (
     NoticeService,
@@ -12,7 +13,7 @@ from notification_api.src.services.notice import (
 notice_api = APIRouter()
 
 
-@notice_api.get("/notice")
+@notice_api.get("/notice", response_model=List[NoticeOut])
 async def get_notice_list(
     notice_service: NoticeService = Depends(get_notice_service),
 ) -> List[NoticeOut]:
@@ -21,16 +22,19 @@ async def get_notice_list(
     return result
 
 
-@notice_api.post("/notice")
+@notice_api.post("/notice", status_code=status.HTTP_201_CREATED)
 async def create_notice(
     notice: NoticeIn,
     notice_service: NoticeService = Depends(get_notice_service),
 ):
-    await notice_service.create(
-        notice_type=notice.type,
-        name=notice.name,
-        description=notice.description,
-    )
+    try:
+        await notice_service.create(
+            notice_type=notice.type,
+            name=notice.name,
+            description=notice.description,
+        )
+    except DocAlreadyExists:
+        raise HTTPException(status.HTTP_409_CONFLICT)
 
 
 @notice_api.put("/notice/{notice_id}")
@@ -39,12 +43,17 @@ async def update_notice(
     notice: NoticeIn,
     notice_service: NoticeService = Depends(get_notice_service),
 ):
-    await notice_service.update(
-        notice_id=notice_id,
-        notice_type=notice.type,
-        name=notice.name,
-        description=notice.description,
-    )
+    try:
+        await notice_service.update(
+            notice_id=notice_id,
+            notice_type=notice.type,
+            name=notice.name,
+            description=notice.description,
+        )
+    except DocAlreadyExists:
+        raise HTTPException(status.HTTP_409_CONFLICT)
+    except DocNotFound:
+        raise HTTPException(status.HTTP_404_NOT_FOUND)
 
 
 @notice_api.delete("/notice/{notice_id}")
@@ -52,4 +61,7 @@ async def delete_notice(
     notice_id: str,
     notice_service: NoticeService = Depends(get_notice_service),
 ):
-    await notice_service.delete(notice_id)
+    try:
+        await notice_service.delete(notice_id)
+    except DocNotFound:
+        raise HTTPException(status.HTTP_404_NOT_FOUND)
