@@ -17,6 +17,7 @@ class NoticeIn(BaseModel):
 
 
 class ExcludedNoticeOut(BaseModel):
+    id: str
     type: str
 
 
