@@ -53,16 +53,16 @@ jobs:
 #    - name: wemake-python-styleguide
 #      uses: wemake-services/wemake-python-styleguide@0.15.2
 
-    - name: Check types
-      run: |
-        mypy .
-        echo "mypy_result=${{ job.status }}" >> $GITHUB_ENV
+#    - name: Check types
+#      run: |
+#        mypy .
+#        echo "mypy_result=${{ job.status }}" >> $GITHUB_ENV
 
-    - name: Send result to telegram
-      if: always()
-      run: |
-        python telegram_message.py
-      env:
-        STEPS_CONTEXT: ${{ toJSON(steps) }}
-        BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
-        CHAT_ID: ${{ secrets.CHAT_ID }}
+#    - name: Send result to telegram
+#      if: always()
+#      run: |
+#        python telegram_message.py
+#      env:
+#        STEPS_CONTEXT: ${{ toJSON(steps) }}
+#        BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+#        CHAT_ID: ${{ secrets.CHAT_ID }}
