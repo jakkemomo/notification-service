@@ -7,3 +7,10 @@ class MessageIn(BaseModel):
     recipients: List[str]
     template_name: str
     template_data: dict
+
+
+class EmailMessage(MessageIn):
+    recipients: List[str]
+    subject: str
+    body_html: str
+    body_text: str = ""

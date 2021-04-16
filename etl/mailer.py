@@ -15,13 +15,12 @@ HOST = config.host
 PORT = config.port
 
 
-def send_mail(recipients: List, subject: str, body_text: str, body_html: str) -> None:
-    # fixme: add loop
+def send_mail(recipient: str, subject: str, body_text: str, body_html: str) -> None:
     # Create message container - the correct MIME type is multipart/alternative.
     msg = MIMEMultipart("alternative")
     msg["Subject"] = subject
     msg["From"] = email.utils.formataddr((SENDERNAME, SENDER))
-    msg["To"] = ", ".join(recipients)
+    msg["To"] = recipient
     # Record the MIME types of both parts - text/plain and text/html.
     part1 = MIMEText(body_text, "plain")
     part2 = MIMEText(body_html, "html")
@@ -38,7 +37,7 @@ def send_mail(recipients: List, subject: str, body_text: str, body_html: str) ->
         # stmplib docs recommend calling ehlo() before & after starttls()
         server.ehlo()
         server.login(USERNAME_SMTP, PASSWORD_SMTP)
-        server.sendmail(SENDER, recipients, msg.as_string())
+        server.sendmail(SENDER, recipient, msg.as_string())
         server.close()
     # Display an error message if something goes wrong.
     except Exception as e:
@@ -70,4 +69,4 @@ if __name__ == "__main__":
     </html>
             """
 
-    send_mail([RECIPIENT], SUBJECT, BODY_TEXT, BODY_HTML)
+    send_mail(RECIPIENT, SUBJECT, BODY_TEXT, BODY_HTML)
