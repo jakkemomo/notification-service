@@ -1,0 +1,35 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.DS_Store
+*.py[cod]
+*$py.class
+
+# Environments
+.env
+*.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+var
+odoo
+odoo-13.0*
+volumes
+tmp-start-command.json
+.lastBuildSha
+# gitlab-runner-test
+builds/*
+
+.idea/
+techelectro_auth_signup.zip
+electro.zip
+
+# .vscode/
+
+# docs
+docs/source/addons
+/etl/.env.prod
+/proxy_app/core/.env.prod
+/ugc_app/config/.env.prod
