@@ -6,4 +6,3 @@ RABBIT_URI = settings.rabbit.get_uri()
 CELERY_CONF = settings.celery.conf
 
 app = Celery(broker=RABBIT_URI)
-app.config_from_object(CELERY_CONF)

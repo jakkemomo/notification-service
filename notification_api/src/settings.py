@@ -18,7 +18,7 @@ class MongoSettings(BaseSettings):
     pwd: str = Field("password", env="MONGO_PWD")
 
     def get_uri(self):
-        return f"{self.scheme}://{self.user}:{self.pwd}@{self.host}:{self.port}/"
+        return f"{self.scheme}://{self.host}:{self.port}/"
 
 
 class AuthSettings(BaseSettings):

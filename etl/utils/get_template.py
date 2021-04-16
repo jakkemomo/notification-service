@@ -12,16 +12,20 @@ def get_template_data(template_name: str) -> Dict:
     """
     host = settings.template_storage.host
     port = settings.template_storage.port
+    final_response = {}
+    logger.info("Getting emails from Template Storage Service")
+    url = f"http://{host}:{port}/api/mail/template/{template_name}"
     try:
-        logger.info("Getting emails from Template Storage Service")
-        url = f"http://{host}:{port}/api/mail/template/{template_name}"
         response = requests.get(url)
-        return response.json()
+        if response.status_code != 200:
+            logger.error("Template Storage is not available, fix it!")
+        else:
+            final_response = response.json()
     except requests.exceptions.Timeout:
         logger.error("Timeout while connecting to Template Storage service!")
-        return {}
     except requests.exceptions.TooManyRedirects:
         logger.error("Bad url for Template Storage service!")
-        return {}
     except requests.exceptions.RequestException as e:
-        raise SystemExit(e)
+        logger.error("Something went wrong during Template Request: %s" % e)
+    finally:
+        return final_response

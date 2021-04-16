@@ -19,7 +19,7 @@ class RabbitSettings(BaseSettings):
     exchange: str = env.get("EXCHANGE_NAME", "notifications")
 
     def get_uri(self):
-        return f"{self.scheme}://{self.user}:{self.pwd}@{self.host}:{self.port}/"
+        return f"{self.scheme}://{self.host}:{self.port}/"
 
 
 class MongoSettings(BaseSettings):
@@ -31,7 +31,7 @@ class MongoSettings(BaseSettings):
     pwd: str = Field("password", env="MONGO_PWD")
 
     def get_uri(self):
-        return f"{self.scheme}://{self.user}:{self.pwd}@{self.host}:{self.port}/"
+        return f"{self.scheme}://{self.host}:{self.port}/"
 
 
 class NotificationAppSettings(BaseSettings):
