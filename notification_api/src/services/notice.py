@@ -19,8 +19,8 @@ logger = logging.getLogger(__name__)
 
 
 class NoticeService:
-    """Класс для управления уведомлениями.
-
+    """
+    Класс для управления уведомлениями.
     Документ в хранилище MongoDb имеет следующую схему:
     {
         type: str
@@ -31,7 +31,6 @@ class NoticeService:
     - `name`:str: название уведомления для отображения пользователю;
     - `description`:str: подробное описание уведомления для отображения пользователю.
     """
-
     COLLECTION_NAME = "notices"
 
     def __init__(self, db: MongoDatabase):

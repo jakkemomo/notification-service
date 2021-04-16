@@ -22,19 +22,19 @@ def send_telegram():
     This function send in our group chat message.
     :return: raise if not ok code
     """
-    result = "successfully"
+    flow_result = "successfully"
     error = False
-    step = ""
+    step_with_error = ""
     project_name = os.getenv("GITHUB_REPOSITORY")
     commit_hash = os.getenv("GITHUB_SHA")
-    for step in steps:
+    for step in steps.keys():
         if not steps[step].get("success"):
-            result = "with error"
+            flow_result = "with error"
             error = True
-            step = steps_id_mapping[step]
-    message = f"{project_name}: Pipeline for {commit_hash} finished {result}!"
+            step_with_error = steps_id_mapping[step]
+    message = f"{project_name}: Pipeline for {commit_hash} finished {flow_result}!"
     if error:
-        message += f"\n {step} failed!"
+        message = f"{message}\n {step_with_error} failed!"
 
     token = os.getenv("BOT_TOKEN")
     url = "https://api.telegram.org/bot"
@@ -55,4 +55,4 @@ def send_telegram():
 
 if __name__ == "__main__":
     # send_telegram()
-    print(os.environ)
+    pass
