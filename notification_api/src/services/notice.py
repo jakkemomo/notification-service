@@ -11,7 +11,9 @@ from pymongo.results import DeleteResult, InsertOneResult, UpdateResult
 from notification_api.src.db.mongo import get_mongo_conn
 from notification_api.src.exceptions import DocAlreadyExists, DocNotFound
 from notification_api.src.models.db import Notice
-from notification_api.src.settings import MONGO_DB
+from notification_api.src.settings import settings
+
+MONGO_DB = settings.mongo.db
 
 logger = logging.getLogger(__name__)
 

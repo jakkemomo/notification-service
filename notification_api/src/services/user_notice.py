@@ -14,7 +14,9 @@ from notification_api.src.services.notice import (
     NoticeService,
     get_notice_service,
 )
-from notification_api.src.settings import MONGO_DB
+from notification_api.src.settings import settings
+
+MONGO_DB = settings.mongo.db
 
 logger = logging.getLogger(__name__)
 

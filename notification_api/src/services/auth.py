@@ -11,9 +11,14 @@ from authlib.jose.errors import BadSignatureError, ExpiredTokenError, JoseError
 from fastapi import Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
-from notification_api.src.settings import AUTH_DEBUG, AUTH_URI, USER_ID_DEBUG
+from notification_api.src.settings import settings
+
+AUTH_DEBUG = settings.auth.debug
+DEBUG_USER_ID = settings.auth.debug_user_id
+AUTH_URI = settings.auth.get_uri()
 
 logger = logging.getLogger(__name__)
+
 http_bearer = HTTPBearer(auto_error=False)
 
 
@@ -79,8 +84,8 @@ async def get_user(
 ) -> Optional[AuthorizedUser]:
     if AUTH_DEBUG:
         debug_claims = {
-            "sub": USER_ID_DEBUG,
-            "rls": [],
+            "sub": DEBUG_USER_ID,
+            "rls": {},
         }
         return AuthorizedUser(debug_claims)
 

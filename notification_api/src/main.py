@@ -4,7 +4,9 @@ from motor.motor_asyncio import AsyncIOMotorClient
 
 from notification_api.src.api.v1 import notice, service_notice, user_notice
 from notification_api.src.db import mongo
-from notification_api.src.settings import MONGO_URI
+from notification_api.src.settings import settings
+
+MONGO_URI = settings.mongo.get_uri()
 
 app = FastAPI()
 
