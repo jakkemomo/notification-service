@@ -1,12 +1,12 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends
 
 from communication_api.models.api import NotificationIn
+from communication_api.services.celery import CeleryService, get_celery_service
 from communication_api.services.history import (
     HistoryService,
     get_history_service,
 )
-from communication_api.services.rabbit import RabbitService, get_rabbit_service
-from communication_api.utils.notifications import check_user_notifications
+from communication_api.utils.filter import filter_recipients
 
 router = APIRouter()
 
@@ -14,23 +14,15 @@ router = APIRouter()
 @router.post("/notification")
 async def send_notification(
     notification: NotificationIn,
-    rabbit: RabbitService = Depends(get_rabbit_service),
+    celery: CeleryService = Depends(get_celery_service),
     history_service: HistoryService = Depends(get_history_service),
 ):
-    # TODO: Hide in service
-    filtered_recipients = []
-    for user_id in notification.message.recipients:
-        excluded_notices = await check_user_notifications(user_id)
-        if notification.content_type in excluded_notices:
-            continue
-        filtered_recipients.append(user_id)
+    notification.message.recipients = await filter_recipients(
+        notification.content_type,
+        notification.message.recipients,
+    )
 
-    if filtered_recipients:
-        notification.message.recipients = filtered_recipients
-        # TODO: Error processing
-        await rabbit.send_message(notification.delivery_type, notification.dict())
+    if notification.message.recipients:
+        await celery.send_task(notification.delivery_type, notification.message.dict())
 
-    # TODO: Error processing
     await history_service.add(**notification.dict())
-
-    return status.HTTP_200_OK
