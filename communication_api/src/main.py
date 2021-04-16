@@ -2,9 +2,9 @@ import uvicorn
 from fastapi import FastAPI
 from motor.motor_asyncio import AsyncIOMotorClient
 
-from communication_api.api.v1.notification import router
-from communication_api.db import mongo
-from communication_api.settings import MONGO_URI
+from communication_api.src.api.v1.notification import router
+from communication_api.src.db import mongo
+from communication_api.src.settings import MONGO_URI
 
 app = FastAPI()
 app.include_router(router)

@@ -1,7 +1,7 @@
 from celery import Celery
 
-from communication_api import celery_app
-from communication_api.settings import DELIVERY_TYPE_TASKS
+from communication_api.src import celery_app
+from communication_api.src.settings import DELIVERY_TYPE_TASKS
 
 
 class CeleryService:

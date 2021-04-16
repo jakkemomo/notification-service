@@ -2,7 +2,7 @@ from typing import List
 
 from aiohttp.client import ClientSession
 
-from communication_api.settings import NOTIFICATION_API_HOST, NOTIFICATION_API_PORT
+from communication_api.src.settings import NOTIFICATION_API_HOST, NOTIFICATION_API_PORT
 
 
 async def check_user_notifications(user_id: str):

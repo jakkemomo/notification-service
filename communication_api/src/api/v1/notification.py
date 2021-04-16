@@ -1,12 +1,15 @@
 from fastapi import APIRouter, Depends
 
-from communication_api.models.api import NotificationIn
-from communication_api.services.celery import CeleryService, get_celery_service
-from communication_api.services.history import (
+from communication_api.src.models.api import NotificationIn
+from communication_api.src.services.celery import (
+    CeleryService,
+    get_celery_service,
+)
+from communication_api.src.services.history import (
     HistoryService,
     get_history_service,
 )
-from communication_api.utils.filter import filter_recipients
+from communication_api.src.utils.filter import filter_recipients
 
 router = APIRouter()
 

@@ -5,8 +5,8 @@ from motor.core import AgnosticCollection as MongoCollection
 from motor.core import AgnosticDatabase as MongoDatabase
 from pymongo.results import InsertOneResult
 
-from communication_api.db.mongo import get_mongo_conn
-from communication_api.settings import MONGO_DB
+from communication_api.src.db.mongo import get_mongo_conn
+from communication_api.src.settings import MONGO_DB
 
 logger = logging.getLogger(__name__)
 
