@@ -2,17 +2,15 @@ from typing import List
 
 from aiohttp.client import ClientSession
 
-from communication_api.src.settings import NOTIFICATION_API_HOST, NOTIFICATION_API_PORT
+from communication_api.src.settings import settings
+
+NOTIFICATION_API_URI = settings.notification_app.get_uri()
 
 
 async def check_user_notifications(user_id: str):
     """ Получение из Notification API список отключенных уведомлений пользователя """
     async with ClientSession() as session:
-        uri = "http://%s:%s/service/user/%s/notice" % (
-            NOTIFICATION_API_HOST,
-            NOTIFICATION_API_PORT,
-            user_id
-        )
+        uri = NOTIFICATION_API_URI.format(user_id=user_id)
         async with session.get(uri) as resp:
             excluded_notices = await resp.json()
             return excluded_notices
