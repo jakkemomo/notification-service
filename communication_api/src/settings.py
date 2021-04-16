@@ -38,10 +38,10 @@ class NotificationAppSettings(BaseSettings):
     scheme: str = Field("http")
     host: str = Field("localhost", env="NOTIFICATION_APP_HOST")
     port: int = Field(8000, env="NOTIFICATION_APP_PORT")
-    path: str = Field("service/user/{user_id}/notice")
+    service_path: str = Field("service/user/{user_id}/notice")
 
     def get_uri(self):
-        return f"{self.scheme}://{self.host}:{self.port}/{self.path}"
+        return f"{self.scheme}://{self.host}:{self.port}/{self.service_path}"
 
 
 class CelerySettings(BaseSettings):
