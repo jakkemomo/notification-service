@@ -5,7 +5,7 @@ import requests
 from etl.settings import settings, logger
 
 
-def get_template(template_name: str) -> Dict:
+def get_template_data(template_name: str) -> Dict:
     """
     :param template_name: Email template code name.
     :return: Json Data with string representation of html template.
@@ -14,7 +14,7 @@ def get_template(template_name: str) -> Dict:
     port = settings.template_storage.port
     try:
         logger.info("Getting emails from Template Storage Service")
-        url = f"http://{host}:{port}/template/{template_name}"
+        url = f"http://{host}:{port}/api/mail/template/{template_name}"
         response = requests.get(url)
         return response.json()
     except requests.exceptions.Timeout:

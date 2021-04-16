@@ -16,6 +16,7 @@ PORT = config.port
 
 
 def send_mail(recipients: List, subject: str, body_text: str, body_html: str) -> None:
+    # fixme: add loop
     # Create message container - the correct MIME type is multipart/alternative.
     msg = MIMEMultipart("alternative")
     msg["Subject"] = subject
