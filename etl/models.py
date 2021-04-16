@@ -13,4 +13,3 @@ class EmailMessage(MessageIn):
     recipients: List[str]
     subject: str
     body_html: str
-    body_text: str = ""

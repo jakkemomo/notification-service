@@ -13,12 +13,31 @@ logger = logging.getLogger(__name__)
 
 class TemplateStorageSettings(BaseSettings):
     host: str = Field("localhost", env="AUTH_APP_HOST")
-    port: int = Field(8000, env="AUTH_APP_PORT")
+    port: int = Field(8899, env="AUTH_APP_PORT")
 
 
 class AuthAppSettings(BaseSettings):
     host: str = Field("localhost", env="AUTH_APP_HOST")
     port: int = Field(5000, env="AUTH_APP_PORT")
+
+
+class BrokerSettings(BaseSettings):
+    scheme: str = Field("amqp", env="BROKER_SCHEME")
+    host: str = Field("localhost", env="BROKER_HOST")
+    port: int = Field(6380, env="BROKER_PORT")
+
+
+class BackendSettings(BaseSettings):
+    scheme: str = Field("redis", env="BACKEND_SCHEME")
+    host: str = Field("localhost", env="BACKEND_HOST")
+    port: int = Field(6380, env="BACKEND_PORT")
+
+
+class CelerySettings(BaseSettings):
+    task_routes: dict = {
+        "email.*": {"queue": "email"},
+        "websocket.*": {"queue": "websocket"},
+    }
 
 
 class MailingServiceSettings(BaseSettings):
@@ -36,6 +55,9 @@ class Settings(BaseSettings):
     auth_app: AuthAppSettings = AuthAppSettings()
     mail_service: MailingServiceSettings = MailingServiceSettings()
     template_storage: TemplateStorageSettings = TemplateStorageSettings()
+    broker: BrokerSettings = BrokerSettings()
+    backend: BackendSettings = BackendSettings()
+    celery: CelerySettings = CelerySettings()
 
 
 settings = Settings.parse_file(DEFAULT_CONFIG_PATH)

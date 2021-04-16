@@ -1,9 +1,14 @@
 from celery import Celery
 
-broker_url = "amqp://localhost:5672"
-redis_url = "redis://localhost:6380"
-app = Celery("tasks", broker=broker_url, backend=redis_url)
-app.conf.task_routes = {
-    'email.*': {'queue': 'email'},
-    'websocket.*': {'queue': 'websocket'},
-}
+from etl.settings import settings
+
+broker_config = settings.broker
+backend_config = settings.backend
+celery_config = settings.celery
+
+broker_url = f"{broker_config.scheme}://{broker_config.host}:{broker_config.port}"
+backend_url = f"{backend_config.scheme}://{backend_config.host}:{backend_config.port}"
+
+app = Celery("tasks", broker=broker_url, backend=backend_url)
+
+app.conf.task_routes = celery_config.task_routes

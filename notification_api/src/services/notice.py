@@ -31,6 +31,7 @@ class NoticeService:
     - `name`:str: название уведомления для отображения пользователю;
     - `description`:str: подробное описание уведомления для отображения пользователю.
     """
+
     COLLECTION_NAME = "notices"
 
     def __init__(self, db: MongoDatabase):
