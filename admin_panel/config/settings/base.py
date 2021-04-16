@@ -36,16 +36,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = secret_key
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = int(os.getenv("DEBUG"))
+DEBUG = True
 
-ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS").split(" ")
-
-RABBIT_HOST = os.getenv("RABBIT_HOST")
-RABBIT_QUEUE = os.getenv("RABBIT_QUEUE")
+ALLOWED_HOSTS = "*"
 
 
 # Application definition
-
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",

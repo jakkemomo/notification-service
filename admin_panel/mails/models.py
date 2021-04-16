@@ -9,8 +9,8 @@ class MailTemplate(models.Model):
     subject = models.CharField(max_length=255)
 
     class Meta:
-        verbose_name = _("Шаблон письма")
-        verbose_name_plural = _("Шаблоны писем")
+        verbose_name = _("Email Template")
+        verbose_name_plural = _("Email Templates")
         indexes = [
             models.Index(fields=["name"]),
         ]
