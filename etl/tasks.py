@@ -93,7 +93,12 @@ def process_email_query(payload: dict) -> None:
 
 @app.task(name="websocket.process_websocket_query")
 def process_websocket_query(payload: dict) -> None:
-    print("Processing Websocket")
+    """
+    Process Websocket Queue.
+    :return: None.
+    """
+    logger.info("Processing Websocket")
+    logger.info(payload)
 
 
 in_message = MessageIn(**{
