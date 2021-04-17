@@ -4,3 +4,4 @@ isort==5.8.0
 mypy==0.812
 lxml==4.4.1
 flake8-html==0.4.1
+requests==2.25.1
