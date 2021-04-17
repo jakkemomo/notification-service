@@ -30,9 +30,9 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-#    - name: Set up lxml libraries for reporting
-#      run: |
-#        sudo apt-get update && sudo apt-get install -y libxml2-dev libxslt-dev python3-dev gcc python-lxml
+    - name: Set up lxml libraries for reporting
+      run: |
+        sudo apt-get update && sudo apt-get install -y libxml2-dev libxslt-dev python3-dev gcc python-lxml
 
     - name: Install dependencies
       run: |
@@ -60,6 +60,7 @@ jobs:
         echo "mypy_result=${{ job.status }}" >> $GITHUB_ENV
 
     - name: Archive code coverage results
+      needs: setup
       if: always()
       uses: actions/upload-artifact@v2
       with:
