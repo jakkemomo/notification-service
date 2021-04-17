@@ -16,7 +16,7 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   build:
-    name: Linters,formatters,type checkers
+    name: Linters, Typecheckers, Formatters
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -58,11 +58,18 @@ jobs:
         mypy .
         echo "mypy_result=${{ job.status }}" >> $GITHUB_ENV
 
-#    - name: Send result to telegram
-#      if: always()
-#      run: |
-#        python telegram_message.py
-#      env:
-#        STEPS_CONTEXT: ${{ toJSON(steps) }}
-#        BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
-#        CHAT_ID: ${{ secrets.CHAT_ID }}
+    #    - name: Archive code coverage results
+    #      if: always()
+    #      uses: actions/upload-artifact@v2
+    #      with:
+    #        name: code-coverage-report
+    #        path: .github/reports
+    #
+    #    - name: Send result to telegram
+    #      if: always()
+    #      run: |
+    #        python telegram_message.py
+    #      env:
+    #        STEPS_CONTEXT: ${{ toJSON(steps) }}
+    #        BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+    #        CHAT_ID: ${{ secrets.CHAT_ID }}
