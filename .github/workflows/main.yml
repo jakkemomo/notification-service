@@ -25,13 +25,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - uses: actions/cache@v2
-      with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('requirements-text.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-
-
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
@@ -60,24 +53,24 @@ jobs:
     #    - name: wemake-python-styleguide
     #      uses: wemake-services/wemake-python-styleguide@0.15.2
 
-    - name: Check types
-      if: always()
-      run: |
-        mypy .
-        echo "mypy_result=${{ job.status }}" >> $GITHUB_ENV
-
-    - name: Archive code coverage results
-      if: always()
-      uses: actions/upload-artifact@v2
-      with:
-        name: code-coverage-report
-        path: .github/reports/mypy
-
-    - name: Send result to telegram
-      if: always()
-      run: |
-        python telegram_message.py
-      env:
-        STEPS_CONTEXT: ${{ toJSON(steps) }}
-        BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
-        CHAT_ID: ${{ secrets.CHAT_ID }}
+    #    - name: Check types
+    #      if: always()
+    #      run: |
+    #        mypy .
+    #        echo "mypy_result=${{ job.status }}" >> $GITHUB_ENV
+    #
+    #    - name: Archive code coverage results
+    #      if: always()
+    #      uses: actions/upload-artifact@v2
+    #      with:
+    #        name: code-coverage-report
+    #        path: .github/reports
+    #
+    #    - name: Send result to telegram
+    #      if: always()
+    #      run: |
+    #        python telegram_message.py
+    #      env:
+    #        STEPS_CONTEXT: ${{ toJSON(steps) }}
+    #        BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+    #        CHAT_ID: ${{ secrets.CHAT_ID }}
