@@ -27,10 +27,10 @@ jobs:
 
     - uses: actions/cache@v2
       with:
-        path: ~/.local/share/virtualenvs
-        key: ${{ runner.os }}-pipenv-${{ hashFiles('Pipfile.lock') }}
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements-text.txt') }}
         restore-keys: |
-          ${{ runner.os }}-pipenv-
+          ${{ runner.os }}-pip-
 
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
@@ -57,8 +57,8 @@ jobs:
         isort .
         echo "isort_result=${{ job.status }}" >> $GITHUB_ENV
 
-        #    - name: wemake-python-styleguide
-        #      uses: wemake-services/wemake-python-styleguide@0.15.2
+    #    - name: wemake-python-styleguide
+    #      uses: wemake-services/wemake-python-styleguide@0.15.2
 
     - name: Check types
       if: always()

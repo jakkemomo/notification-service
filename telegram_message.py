@@ -1,5 +1,6 @@
 import json
 import os
+from typing import Optional, Union
 
 import requests
 
@@ -13,7 +14,7 @@ steps_id_mapping = {
     "6": "Check types",
     "7": "Send result to telegram",
 }
-steps_string_json: str = os.getenv("STEPS_CONTEXT")
+steps_string_json: Union[str, bytes] = os.getenv("STEPS_CONTEXT")
 steps: dict = json.loads(steps_string_json)
 
 
