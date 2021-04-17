@@ -16,7 +16,7 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   build:
-    name: Prepare system
+    name: Linters, Typecheckers, Formatters
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -24,6 +24,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+
+    - uses: actions/cache@v2
+      with:
+        path: ~/.local/share/virtualenvs
+        key: ${{ runner.os }}-pipenv-${{ hashFiles('Pipfile.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-pipenv-
 
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
@@ -40,34 +47,26 @@ jobs:
         pip install -r requirements-test.txt
         echo "dependency_result=${{ job.status }}" >> $GITHUB_ENV
 
-   test:
-     name: Linters,formatters,type checkers
-     steps:
-     - name: Refactor with pyupgrade
-         run: |
-           pyupgrade
-           echo "pyugrade_result=${{ job.status }}" >> $GITHUB_ENV
+    - name: Refactor with pyupgrade
+      run: |
+        pyupgrade
+        echo "pyugrade_result=${{ job.status }}" >> $GITHUB_ENV
 
-     - name: Refactor with isort
-       run: |
-         isort .
-         echo "isort_result=${{ job.status }}" >> $GITHUB_ENV
+    - name: Refactor with isort
+      run: |
+        isort .
+        echo "isort_result=${{ job.status }}" >> $GITHUB_ENV
 
-     #    - name: wemake-python-styleguide
-     #      uses: wemake-services/wemake-python-styleguide@0.15.2
+        #    - name: wemake-python-styleguide
+        #      uses: wemake-services/wemake-python-styleguide@0.15.2
 
-     - name: Check types
-       if: always()
-       run: |
-         mypy .
-         echo "mypy_result=${{ job.status }}" >> $GITHUB_ENV
+    - name: Check types
+      if: always()
+      run: |
+        mypy .
+        echo "mypy_result=${{ job.status }}" >> $GITHUB_ENV
 
-    finish:
-      name: Last Pipiline steps
-      needs: [build, test]
-
-      steps:
-       - name: Archive code coverage results
+    - name: Archive code coverage results
       if: always()
       uses: actions/upload-artifact@v2
       with:
