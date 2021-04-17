@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path
-from admin_panel.mails.api import MailTemplateDetail, MailTemplateList
+from mails.api import MailTemplateDetail, MailTemplateList
 
 urlpatterns = [
     path("admin/", admin.site.urls),
