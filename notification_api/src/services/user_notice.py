@@ -60,11 +60,9 @@ class UserNoticeService:
         # При выполнении условия считаем, что у пользователя еще не было отключенных
         # уведомлений, т.е. все уведомления включены.
         if not res.matched_count or not res.modified_count:
-            logger.info(
-                "User [%s] tries to turn on already active [%s] notice."
-                % (user_id, notice_id)
-            )
-            raise DocNotFound()
+            msg = "User [%s] tries to turn on already active [%s] notice." % (user_id, notice_id)
+            logger.info(msg)
+            raise DocNotFound(msg=msg)
 
     async def deactivate(self, user_id: str, notice_id: str):
         """ Отключить у пользователя уведомления данного типа """
@@ -86,11 +84,9 @@ class UserNoticeService:
             await self._create_new_notice_settings(user_id, excluded_notice)
 
         if not res.modified_count:
-            logger.info(
-                "User [%s] already has the turned notice [%s] off."
-                % (user_id, notice_id)
-            )
-            raise DocAlreadyExists()
+            msg = "User [%s] already has the turned notice [%s] off." % (user_id, notice_id)
+            logger.info(msg)
+            raise DocAlreadyExists(msg=msg)
 
     async def get_excluded_notices(self, user_id: str) -> List[ExcludedNotice]:
         """ Получение списка уведомлений, отключенных пользователем """
