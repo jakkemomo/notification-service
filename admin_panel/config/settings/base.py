@@ -18,12 +18,19 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-db_host = env["db_host"]
-db_port = env["db_port"]
-db_name = env["db_name"]
-db_user = env["db_user"]
-db_password = env["db_password"]
-secret_key = env["secret_key"]
+db_host = env.get("db_host", "localhost")
+db_port = env.get("db_port", "5432")
+db_name = env.get("db_name", "templates")
+db_user = env.get("db_user", "jaqombo")
+db_password = env.get("db_password", "12345")
+secret_key = env.get("secret_key", "qwerty")
+notify_api_host = env.get("notifaction_api_host", "localhost")
+notify_api_port = env.get("notifaction_api_port", "8888")
+movie_api_host = env.get("movie_api_host", "localhost")
+movie_api_port = env.get("movie_api_port", "8890")
+
+NOTIFICATION_API_HAND = f"http://{notify_api_host}:{notify_api_port}"
+MOVIE_API_HAND = f"http://{movie_api_host}:{movie_api_port}"
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent

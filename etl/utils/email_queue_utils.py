@@ -50,6 +50,7 @@ def send_email_messages(message: EmailMessage, sleep_time: int = 0) -> None:
     :return: None.
     """
     sleep(sleep_time)
+    # todo: abstract
     for recipient in message.recipients:
         send_email(
             recipient=recipient,

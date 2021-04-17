@@ -9,7 +9,7 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 from django_apscheduler.jobstores import DjangoJobStore
 
-from ...sql_queries import SQL_RATINGS, SQL_REVIEWS, SQL_USER_IDS, SQL_VIEWS
+from admin_panel.mails.sql_queries import SQL_USER_IDS, SQL_VIEWS, SQL_RATINGS, SQL_REVIEWS
 
 
 def new_movies_news_letter():
@@ -43,7 +43,7 @@ def category_per_user_letter():
         reviews_count = client.execute(SQL_REVIEWS.format(client_id, week_earlier))
         send_data = {
             "template_name": "user_activities",
-            "recipients": client_id,
+            "recipients": [client_id],
             "template_data": {
                 "user_id": client_id,
                 "views_count": views_count,

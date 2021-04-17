@@ -24,7 +24,7 @@ class AuthAppSettings(BaseSettings):
 class BrokerSettings(BaseSettings):
     scheme: str = Field("amqp", env="BROKER_SCHEME")
     host: str = Field("localhost", env="BROKER_HOST")
-    port: int = Field(6380, env="BROKER_PORT")
+    port: int = Field(5672, env="BROKER_PORT")
 
 
 class BackendSettings(BaseSettings):

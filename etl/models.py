@@ -10,6 +10,5 @@ class MessageIn(BaseModel):
 
 
 class EmailMessage(MessageIn):
-    recipients: List[str]
     subject: str
     body_html: str
