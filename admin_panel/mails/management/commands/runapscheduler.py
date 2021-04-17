@@ -50,7 +50,7 @@ def category_per_user_letter():
         films_ids = set([v[0] for v in views_films] + [r[0] for r in ratings_films])
         films = {}
         for film_id in films_ids:
-            r = requests.get("http://0.0.0.0:8000/api/v1/film/" + film_id)
+            r = requests.get("/".join((settings.MOVIE_API_HAND, "api/v1/film/", film_id)))
             films[film_id] = r.json()["title"]
         send_data = {
             "template_name": "user_activities",

@@ -27,6 +27,12 @@ notify_api_host = env.get("notifaction_api_host", "localhost")
 notify_api_port = env.get("notifaction_api_port", "8888")
 movie_api_host = env.get("movie_api_host", "localhost")
 movie_api_port = env.get("movie_api_port", "8890")
+CLICKHOUSE_HOST = env.get("CLICKHOUSE_HOST")
+CLICKHOUSE_PORT = env.get("CLICKHOUSE_PORT")
+CLICKHOUSE_USER = env.get("CLICKHOUSE_USER")
+CLICKHOUSE_PASSWORD = env.get("CLICKHOUSE_PASSWORD")
+CLICKHOUSE_CERT = env.get("CLICKHOUSE_CERT")
+
 
 NOTIFICATION_API_HAND = f"http://{notify_api_host}:{notify_api_port}"
 MOVIE_API_HAND = f"http://{movie_api_host}:{movie_api_port}"
