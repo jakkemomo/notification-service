@@ -50,13 +50,13 @@ jobs:
         isort .
         echo "isort_result=${{ job.status }}" >> $GITHUB_ENV
 
-#    - name: wemake-python-styleguide
-#      uses: wemake-services/wemake-python-styleguide@0.15.2
+    - name: wemake-python-styleguide
+      uses: wemake-services/wemake-python-styleguide@0.15.2
 
-#    - name: Check types
-#      run: |
-#        mypy .
-#        echo "mypy_result=${{ job.status }}" >> $GITHUB_ENV
+    - name: Check types
+      run: |
+        mypy .
+        echo "mypy_result=${{ job.status }}" >> $GITHUB_ENV
 
 #    - name: Send result to telegram
 #      if: always()
