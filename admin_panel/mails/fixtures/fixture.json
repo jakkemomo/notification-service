@@ -31,7 +31,7 @@
     "pk": 4,
     "fields": {
       "name": "user_activities",
-      "body": "Здравствуйте, уважаемый {{ user_id }}.\r\nЗа прошлую неделю вы {% if films_count > 0 %}посмотрели  {{ films_count }} фильмов,{% endif %} {% if likes_count > 0 %}поставили {{ likes_count }} лайков,{% endif %}{% if comments_count > 0 %} написали {{ comments_count }} комментариев{% endif %}.",
+      "body": "Здравствуйте, уважаемый {{ user_id }}.\nЗа прошлую неделю вы {% if views_films|length > 0 %}посмотрели  {{ views_films|length }} фильмов, вот они {% for film in views_films%}{{ film }}, {% endfor %}{% endif %} {% if likes_films|length > 0 %}поставили {{ likes_films|length }} лайков, вот они {% for film in likes_films%}{{ film }}, {% endfor %}{% endif %}{% if comments_films|length > 0 %} написали {{ comments_films|length }} комментариев{% endif %} для фильмов {% for film in comments_films%}{{ film }}, {% endfor %}.",
       "subject": "Действия пользователя за неделю"
     }
   }

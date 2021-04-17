@@ -9,7 +9,12 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 from django_apscheduler.jobstores import DjangoJobStore
 
-from admin_panel.mails.sql_queries import SQL_USER_IDS, SQL_VIEWS, SQL_RATINGS, SQL_REVIEWS
+from admin_panel.mails.sql_queries import (
+    SQL_USER_IDS,
+    SQL_VIEWS,
+    SQL_RATINGS,
+    SQL_REVIEWS,
+)
 
 
 def new_movies_news_letter():
@@ -38,17 +43,23 @@ def category_per_user_letter():
     week_earlier = (datetime.now() - timedelta(days=7)).timestamp()
     client_ids = client.execute(SQL_USER_IDS.format(week_earlier))
     for client_id in client_ids:
-        views_count = client.execute(SQL_VIEWS.format(client_id, week_earlier))
-        ratings_count = client.execute(SQL_RATINGS.format(client_id, week_earlier))
-        reviews_count = client.execute(SQL_REVIEWS.format(client_id, week_earlier))
+        client_id = client_id[0]
+        views_films = client.execute(SQL_VIEWS.format(client_id, week_earlier))
+        ratings_films = client.execute(SQL_RATINGS.format(client_id, week_earlier))
+        reviews_films = client.execute(SQL_REVIEWS.format(client_id, week_earlier))
+        films_ids = set([v[0] for v in views_films] + [r[0] for r in ratings_films])
+        films = {}
+        for film_id in films_ids:
+            r = requests.get("http://0.0.0.0:8000/api/v1/film/" + film_id)
+            films[film_id] = r.json()["title"]
         send_data = {
             "template_name": "user_activities",
             "recipients": [client_id],
             "template_data": {
                 "user_id": client_id,
-                "views_count": views_count,
-                "ratings_count": ratings_count,
-                "reviews_count": reviews_count,
+                "views_films": [films[v[0]] for v in views_films],
+                "ratings_films": [films[r[0]] for r in ratings_films],
+                "reviews_films": [films[r[0]] for r in reviews_films],
             },
         }
         requests.post(settings.NOTIFICATION_API_HAND, body=send_data)
@@ -63,6 +74,7 @@ class Command(BaseCommand):
 
         logging.info("Added job 'new_movies_news_letter'.")
 
+        """
         scheduler.add_job(
             new_movies_news_letter,
             trigger=CronTrigger(
@@ -72,6 +84,7 @@ class Command(BaseCommand):
             max_instances=1,
             replace_existing=True,
         )
+        """
         scheduler.add_job(
             category_per_user_letter,
             trigger=CronTrigger(
