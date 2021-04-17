@@ -71,7 +71,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: code-coverage-report
-        path: .github/reports/mypy
+        path: .github/reports/mypy/index.html
 
     - name: Send result to telegram
       if: always()
