@@ -1,7 +1,7 @@
 from rest_framework import generics
 
-from .models import MailTemplate
-from .serializers import MailTemplateSerializer
+from admin_panel.mails.models import MailTemplate
+from admin_panel.mails.serializers import MailTemplateSerializer
 
 
 class MailTemplateDetail(generics.RetrieveUpdateDestroyAPIView):

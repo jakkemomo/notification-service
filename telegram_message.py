@@ -5,6 +5,8 @@ import os
 import requests
 logger = logging.getLogger(__name__)
 
+logger = logging.getLogger(__name__)
+
 steps_id_mapping = {
     "0": "actions/checkout@v2",
     "1": "Set up Python",

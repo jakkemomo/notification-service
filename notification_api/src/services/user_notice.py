@@ -60,7 +60,10 @@ class UserNoticeService:
         # При выполнении условия считаем, что у пользователя еще не было отключенных
         # уведомлений, т.е. все уведомления включены.
         if not res.matched_count or not res.modified_count:
-            msg = "User [%s] tries to turn on already active [%s] notice." % (user_id, notice_id)
+            msg = "User [%s] tries to turn on already active [%s] notice." % (
+                user_id,
+                notice_id,
+            )
             logger.info(msg)
             raise DocNotFound(msg=msg)
 
@@ -84,7 +87,10 @@ class UserNoticeService:
             await self._create_new_notice_settings(user_id, excluded_notice)
 
         if not res.modified_count:
-            msg = "User [%s] already has the turned notice [%s] off." % (user_id, notice_id)
+            msg = "User [%s] already has the turned notice [%s] off." % (
+                user_id,
+                notice_id,
+            )
             logger.info(msg)
             raise DocAlreadyExists(msg=msg)
 
