@@ -3,6 +3,7 @@ import logging
 import os
 
 import requests
+logger = logging.getLogger(__name__)
 
 logger = logging.getLogger(__name__)
 
@@ -16,7 +17,7 @@ steps_id_mapping = {
     "6": "Check types",
     "7": "Send result to telegram",
 }
-steps_string_json: str = os.getenv("STEPS_CONTEXT")
+steps_string_json = os.getenv("STEPS_CONTEXT")
 steps: dict = json.loads(steps_string_json)
 
 
