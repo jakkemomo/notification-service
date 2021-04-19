@@ -4,10 +4,9 @@ from datetime import datetime, timedelta
 import requests
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.cron import CronTrigger
-from clickhouse_driver import Client
 from django.conf import settings
 from django.core.management.base import BaseCommand
-from django_apscheduler.jobstores import DjangoJobStore
+from django_apscheduler.jobstores import DjangoJobStore, logger
 
 from admin_panel.mails.sql_queries import (
     SQL_USER_IDS,
@@ -31,38 +30,65 @@ def new_movies_news_letter():
     requests.post(settings.NOTIFICATION_API_HAND, body=send_data)
 
 
+def get_data_from_clickhouse(query: str) -> str:
+    url = f'https://{settings.CLICKHOUSE_HOST}:{settings.CLICKHOUSE_PORT}/?database={settings.CLICKHOUSE_DB}&query={query}'
+    auth = {
+        'X-ClickHouse-User': settings.CLICKHOUSE_USER,
+        'X-ClickHouse-Key': settings.CLICKHOUSE_PASSWORD,
+    }
+    try:
+        res = requests.get(
+            url,
+            headers=auth,
+            verify=settings.CLICKHOUSE_CERT)
+        res.raise_for_status()
+        return res.text
+    except Exception as e:
+        logger.error("Error while sending request to Clickhouse Storage: %s" % e)
+        return "\n"
+
+
+def get_list_of_clickhouse_records(query: str) -> list:
+    clickhouse_data = get_data_from_clickhouse(query)
+    return list(set(filter(None, clickhouse_data.split('\n'))))
+
+
 def category_per_user_letter():
-    client = Client(
-        host=settings.CLICKHOUSE_HOST,
-        port=settings.CLICKHOUSE_PORT,
-        user=settings.CLICKHOUSE_USER,
-        password=settings.CLICKHOUSE_PASSWORD,
-        secure=True,
-        ca_certs=settings.CLICKHOUSE_CERT,
-    )
     week_earlier = (datetime.now() - timedelta(days=7)).timestamp()
-    client_ids = client.execute(SQL_USER_IDS.format(week_earlier))
+    client_ids = get_list_of_clickhouse_records(SQL_USER_IDS.format(week_earlier))
     for client_id in client_ids:
-        client_id = client_id[0]
-        views_films = client.execute(SQL_VIEWS.format(client_id, week_earlier))
-        ratings_films = client.execute(SQL_RATINGS.format(client_id, week_earlier))
-        reviews_films = client.execute(SQL_REVIEWS.format(client_id, week_earlier))
-        films_ids = set([v[0] for v in views_films] + [r[0] for r in ratings_films])
+        error = False
+        views_films = get_list_of_clickhouse_records(SQL_VIEWS.format(client_id, week_earlier))
+        ratings_films = get_list_of_clickhouse_records(SQL_RATINGS.format(client_id, week_earlier))
+        reviews_films = get_list_of_clickhouse_records(SQL_REVIEWS.format(client_id, week_earlier))
+        films_ids = set(views_films + ratings_films + reviews_films)
         films = {}
         for film_id in films_ids:
-            r = requests.get("/".join((settings.MOVIE_API_HAND, "api/v1/film/", film_id)))
-            films[film_id] = r.json()["title"]
-        send_data = {
-            "template_name": "user_activities",
-            "recipients": [client_id],
-            "template_data": {
-                "user_id": client_id,
-                "views_films": [films[v[0]] for v in views_films],
-                "ratings_films": [films[r[0]] for r in ratings_films],
-                "reviews_films": [films[r[0]] for r in reviews_films],
-            },
-        }
-        requests.post(settings.NOTIFICATION_API_HAND, body=send_data)
+            try:
+                r = requests.get(f"{settings.MOVIE_API_HAND}/v1/film/{film_id}", headers={'Authorization': "ADMIN"})
+                films[film_id] = r.json()["title"]
+            except Exception as e:
+                logger.error("Error while sending request to Movie API: %s" % e)
+                error = True
+                continue
+        if not error and films_ids:
+            payload = {
+                "delivery_type": "email",
+                "content_type": "news",
+                "message": {
+                    "recipients": [client_id],
+                    "template_name": "user_activities",
+                    "template_data": {
+                        "views_films": [films[film_id] for film_id in views_films],
+                        "ratings_films": [films[film_id] for film_id in ratings_films],
+                        "reviews_films": [films[film_id] for film_id in reviews_films],
+                    },
+                }
+            }
+            try:
+                requests.post(f"{settings.NOTIFICATION_API_HAND}/notification", json=payload)
+            except Exception as e:
+                logger.error("Error while sending request to Notification API: %s" % e)
 
 
 class Command(BaseCommand):
@@ -88,7 +114,7 @@ class Command(BaseCommand):
         scheduler.add_job(
             category_per_user_letter,
             trigger=CronTrigger(
-                day_of_week="fri", hour="00", minute="00"
+                day_of_week="mon", hour="23", minute="58", second="35"
             ),  # Midnight on Monday, before start of the next work week.
             id="Category per user letter",
             max_instances=1,

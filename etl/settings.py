@@ -12,13 +12,13 @@ logger = logging.getLogger(__name__)
 
 
 class TemplateStorageSettings(BaseSettings):
-    host: str = Field("localhost", env="AUTH_APP_HOST")
-    port: int = Field(8899, env="AUTH_APP_PORT")
+    host: str = Field("localhost", env="TEMPLATE_STORAGE_HOST")
+    port: int = Field(8899, env="TEMPLATE_STORAGE_PORT")
 
 
 class AuthAppSettings(BaseSettings):
     host: str = Field("localhost", env="AUTH_APP_HOST")
-    port: int = Field(5000, env="AUTH_APP_PORT")
+    port: int = Field(8080, env="AUTH_APP_PORT")
 
 
 class BrokerSettings(BaseSettings):

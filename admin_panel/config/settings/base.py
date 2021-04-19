@@ -30,8 +30,9 @@ movie_api_port = env.get("movie_api_port", "8890")
 CLICKHOUSE_HOST = env.get("CLICKHOUSE_HOST")
 CLICKHOUSE_PORT = env.get("CLICKHOUSE_PORT")
 CLICKHOUSE_USER = env.get("CLICKHOUSE_USER")
+CLICKHOUSE_DB = env.get("CLICKHOUSE_DB", "movies")
 CLICKHOUSE_PASSWORD = env.get("CLICKHOUSE_PASSWORD")
-CLICKHOUSE_CERT = env.get("CLICKHOUSE_CERT")
+CLICKHOUSE_CERT = env.get("CLICKHOUSE_CERT", "/usr/local/share/ca-certificates/Yandex/YandexInternalRootCA.crt")
 
 
 NOTIFICATION_API_HAND = f"http://{notify_api_host}:{notify_api_port}"
@@ -136,7 +137,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Europe/Minsk"
 
 USE_I18N = True
 
