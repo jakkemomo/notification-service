@@ -15,19 +15,18 @@ from admin_panel.mails.sql_queries import (
     SQL_VIEWS,
 )
 
-
-def new_movies_news_letter():
-    sort_params = "?sort=-created_at&page[size]=51"
-    r = requests.get(settings.MOVIE_API_HAND + sort_params)
-    result = r.json()
-    films_count = len(result)
-    films = result[:10]
-    send_data = {
-        "template_name": "new_film",
-        "recipients": "all",
-        "template_data": {"films": films, "films_count": films_count},
-    }
-    requests.post(settings.NOTIFICATION_API_HAND, body=send_data)
+# def new_movies_news_letter():
+#     sort_params = "?sort=-created_at&page[size]=51"
+#     r = requests.get(settings.MOVIE_API_HAND + sort_params)
+#     result = r.json()
+#     films_count = len(result)
+#     films = result[:10]
+#     send_data = {
+#         "template_name": "new_film",
+#         "recipients": "all",
+#         "template_data": {"films": films, "films_count": films_count},
+#     }
+#     requests.post(settings.NOTIFICATION_API_HAND, body=send_data)
 
 
 def get_data_from_clickhouse(query: str) -> str:
@@ -76,7 +75,6 @@ def category_per_user_letter():
             except Exception as e:
                 logger.error("Error while sending request to Movie API: %s" % e)
                 error = True
-                continue
         if not error and films_ids:
             payload = {
                 "delivery_type": "email",
@@ -85,9 +83,13 @@ def category_per_user_letter():
                     "recipients": [client_id],
                     "template_name": "user_activities",
                     "template_data": {
-                        "views_films": [films[film_id] for film_id in views_films],
-                        "ratings_films": [films[film_id] for film_id in ratings_films],
-                        "reviews_films": [films[film_id] for film_id in reviews_films],
+                        "views_films": [films[film_uuid] for film_uuid in views_films],
+                        "ratings_films": [
+                            films[film_uuid] for film_uuid in ratings_films
+                        ],
+                        "reviews_films": [
+                            films[film_uuid] for film_uuid in reviews_films
+                        ],
                     },
                 },
             }
@@ -106,19 +108,18 @@ class Command(BaseCommand):
         scheduler = BlockingScheduler(timezone=settings.TIME_ZONE)
         scheduler.add_jobstore(DjangoJobStore(), "default")
 
-        logging.info("Added job 'new_movies_news_letter'.")
+        # logging.info("Added job 'new_movies_news_letter'.")
+        #
+        # scheduler.add_job(
+        #     new_movies_news_letter,
+        #     trigger=CronTrigger(
+        #         day_of_week="mon", hour="00", minute="00"
+        #     ),  # Midnight on Monday, before start of the next work week.
+        #     id="New movies news letter",
+        #     max_instances=1,
+        #     replace_existing=True,
+        # )
 
-        """
-        scheduler.add_job(
-            new_movies_news_letter,
-            trigger=CronTrigger(
-                day_of_week="mon", hour="00", minute="00"
-            ),  # Midnight on Monday, before start of the next work week.
-            id="New movies news letter",
-            max_instances=1,
-            replace_existing=True,
-        )
-        """
         scheduler.add_job(
             category_per_user_letter,
             trigger=CronTrigger(
