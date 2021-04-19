@@ -9,10 +9,10 @@ from django.core.management.base import BaseCommand
 from django_apscheduler.jobstores import DjangoJobStore, logger
 
 from admin_panel.mails.sql_queries import (
-    SQL_USER_IDS,
-    SQL_VIEWS,
     SQL_RATINGS,
     SQL_REVIEWS,
+    SQL_USER_IDS,
+    SQL_VIEWS,
 )
 
 
@@ -31,16 +31,13 @@ def new_movies_news_letter():
 
 
 def get_data_from_clickhouse(query: str) -> str:
-    url = f'https://{settings.CLICKHOUSE_HOST}:{settings.CLICKHOUSE_PORT}/?database={settings.CLICKHOUSE_DB}&query={query}'
+    url = f"https://{settings.CLICKHOUSE_HOST}:{settings.CLICKHOUSE_PORT}/?database={settings.CLICKHOUSE_DB}&query={query}"
     auth = {
-        'X-ClickHouse-User': settings.CLICKHOUSE_USER,
-        'X-ClickHouse-Key': settings.CLICKHOUSE_PASSWORD,
+        "X-ClickHouse-User": settings.CLICKHOUSE_USER,
+        "X-ClickHouse-Key": settings.CLICKHOUSE_PASSWORD,
     }
     try:
-        res = requests.get(
-            url,
-            headers=auth,
-            verify=settings.CLICKHOUSE_CERT)
+        res = requests.get(url, headers=auth, verify=settings.CLICKHOUSE_CERT)
         res.raise_for_status()
         return res.text
     except Exception as e:
@@ -50,7 +47,7 @@ def get_data_from_clickhouse(query: str) -> str:
 
 def get_list_of_clickhouse_records(query: str) -> list:
     clickhouse_data = get_data_from_clickhouse(query)
-    return list(set(filter(None, clickhouse_data.split('\n'))))
+    return list(set(filter(None, clickhouse_data.split("\n"))))
 
 
 def category_per_user_letter():
@@ -58,14 +55,23 @@ def category_per_user_letter():
     client_ids = get_list_of_clickhouse_records(SQL_USER_IDS.format(week_earlier))
     for client_id in client_ids:
         error = False
-        views_films = get_list_of_clickhouse_records(SQL_VIEWS.format(client_id, week_earlier))
-        ratings_films = get_list_of_clickhouse_records(SQL_RATINGS.format(client_id, week_earlier))
-        reviews_films = get_list_of_clickhouse_records(SQL_REVIEWS.format(client_id, week_earlier))
+        views_films = get_list_of_clickhouse_records(
+            SQL_VIEWS.format(client_id, week_earlier)
+        )
+        ratings_films = get_list_of_clickhouse_records(
+            SQL_RATINGS.format(client_id, week_earlier)
+        )
+        reviews_films = get_list_of_clickhouse_records(
+            SQL_REVIEWS.format(client_id, week_earlier)
+        )
         films_ids = set(views_films + ratings_films + reviews_films)
         films = {}
         for film_id in films_ids:
             try:
-                r = requests.get(f"{settings.MOVIE_API_HAND}/v1/film/{film_id}", headers={'Authorization': "ADMIN"})
+                r = requests.get(
+                    f"{settings.MOVIE_API_HAND}/v1/film/{film_id}",
+                    headers={"Authorization": "ADMIN"},
+                )
                 films[film_id] = r.json()["title"]
             except Exception as e:
                 logger.error("Error while sending request to Movie API: %s" % e)
@@ -83,10 +89,12 @@ def category_per_user_letter():
                         "ratings_films": [films[film_id] for film_id in ratings_films],
                         "reviews_films": [films[film_id] for film_id in reviews_films],
                     },
-                }
+                },
             }
             try:
-                requests.post(f"{settings.NOTIFICATION_API_HAND}/notification", json=payload)
+                requests.post(
+                    f"{settings.NOTIFICATION_API_HAND}/notification", json=payload
+                )
             except Exception as e:
                 logger.error("Error while sending request to Notification API: %s" % e)
 
