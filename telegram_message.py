@@ -1,7 +1,10 @@
 import json
+import logging
 import os
 
 import requests
+
+logger = logging.getLogger(__name__)
 
 steps_id_mapping = {
     "0": "actions/checkout@v2",
@@ -55,4 +58,4 @@ def send_telegram():
 
 if __name__ == "__main__":
     # send_telegram()
-    pass
+    logger.info(steps)

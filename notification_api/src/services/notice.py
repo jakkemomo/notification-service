@@ -42,8 +42,9 @@ class NoticeService:
         """ Получить информацию о конкретном уведомлении """
         doc = await self.collection.find_one({"_id": notice_id})
         if not doc:
-            logger.info("Notice [%s] not found." % notice_id)
-            raise DocNotFound()
+            msg = "Notice [%s] not found." % notice_id
+            logger.info(msg)
+            raise DocNotFound(msg=msg)
 
         return Notice.parse_obj(doc)
 
@@ -65,11 +66,12 @@ class NoticeService:
                 new_notice.dict(by_alias=True)
             )
         except DuplicateKeyError:
-            logger.info(
+            msg = (
                 "Try to create notice with already used type. Doc [%s]."
                 % new_notice.dict(by_alias=True)
             )
-            raise DocAlreadyExists()
+            logger.info(msg)
+            raise DocAlreadyExists(msg=msg)
 
         if not res.inserted_id:
             logger.warning(
@@ -92,15 +94,17 @@ class NoticeService:
                 {"$set": updated_notice.dict()},
             )
         except DuplicateKeyError:
-            logger.info(
+            msg = (
                 "Try to set notice type with already used value. Doc [%s]."
                 % updated_notice.dict(by_alias=True)
             )
-            raise DocAlreadyExists()
+            logger.info(msg)
+            raise DocAlreadyExists(msg=msg)
 
         if not res.matched_count:
-            logger.info("Notice [%s] not found." % notice_id)
-            raise DocNotFound()
+            msg = "Notice [%s] not found." % notice_id
+            logger.info(msg)
+            raise DocNotFound(msg=msg)
 
         if not res.modified_count:
             logger.warning("Notice [%s] was not modified." % notice_id)
@@ -109,8 +113,9 @@ class NoticeService:
         """ Удалить уведомление """
         res: DeleteResult = await self.collection.delete_one({"_id": notice_id})
         if not res.deleted_count:
-            logger.info("Notice [%s] not found." % notice_id)
-            raise DocNotFound()
+            msg = "Notice [%s] not found." % notice_id
+            logger.info(msg)
+            raise DocNotFound(msg=msg)
 
 
 def get_notice_service(mongo_conn=Depends(get_mongo_conn)) -> NoticeService:
