@@ -28,10 +28,11 @@ class WebsocketManager:
         for ws in user_connections:
             try:
                 await ws.send_text(message)
+                logger.info(f"Sent message to user {user_id}")
             except ConnectionClosed:
                 self.disconnect(user_id, ws)
 
 
-@lru_cache
+@lru_cache(None)
 def get_websocket_manager() -> WebsocketManager:
     return WebsocketManager()

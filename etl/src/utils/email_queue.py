@@ -34,7 +34,7 @@ def get_template_data_by_name(message: MessageIn) -> dict:
         return {}
 
 
-def enrich_message_with_template_data(email_message: Optional[EmailMessage, WebsocketMessage]):
+def enrich_message_with_template_data(email_message: Optional):
     """
     :param email_message: Message object.
     :return: Message object with enriched values in template variable.
