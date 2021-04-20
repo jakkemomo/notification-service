@@ -41,35 +41,33 @@ jobs:
         echo "dependency_result=${{ job.status }}" >> $GITHUB_ENV
 
     - name: Refactor with pyupgrade
+      id: pyupgrade
       run: |
         pyupgrade
         echo "pyugrade_result=${{ job.status }}" >> $GITHUB_ENV
 
     - name: Refactor with isort
+      id: isort
       run: |
         isort .
         echo "isort_result=${{ job.status }}" >> $GITHUB_ENV
 
     - name: wemake-python-styleguide
-      uses: wemake-services/wemake-python-styleguide@0.15.2
+      id: flake8
+      run: flake8 .
 
     - name: Check types
+      id: mypy
       run: |
         mypy .
         echo "mypy_result=${{ job.status }}" >> $GITHUB_ENV
 
-    #    - name: Archive code coverage results
-    #      if: always()
-    #      uses: actions/upload-artifact@v2
-    #      with:
-    #        name: code-coverage-report
-    #        path: .github/reports
-    #
-    #    - name: Send result to telegram
-    #      if: always()
-    #      run: |
-    #        python telegram_message.py
-    #      env:
-    #        STEPS_CONTEXT: ${{ toJSON(steps) }}
-    #        BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
-    #        CHAT_ID: ${{ secrets.CHAT_ID }}
+
+    - name: Send result to telegram
+      if: always()
+      run: |
+        echo '${{ toJson(steps) }}' >> steps.json
+        python telegram_message.py
+      env:
+        BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+        CHAT_ID: ${{ secrets.CHAT_ID }}

@@ -1,24 +1,12 @@
 import json
 import logging
 import os
-
 import requests
 logger = logging.getLogger(__name__)
 
-logger = logging.getLogger(__name__)
 
-steps_id_mapping = {
-    "0": "actions/checkout@v2",
-    "1": "Set up Python",
-    "2": "Install dependencies",
-    "3": "Refactor with pyupgrade",
-    "4": "Refactor with isort",
-    "5": "wemake-python-styleguide",
-    "6": "Check types",
-    "7": "Send result to telegram",
-}
-steps_string_json = os.getenv("STEPS_CONTEXT")
-steps: dict = json.loads(steps_string_json)
+with open('steps.json') as t:
+    steps = json.load(t)
 
 
 def send_telegram():
@@ -32,10 +20,10 @@ def send_telegram():
     project_name = os.getenv("GITHUB_REPOSITORY")
     commit_hash = os.getenv("GITHUB_SHA")
     for step in steps.keys():
-        if not steps[step].get("success"):
+        if not steps[step].get("conclusion") == "success":
             flow_result = "with error"
             error = True
-            step_with_error = steps_id_mapping[step]
+            step_with_error = step
     message = f"{project_name}: Pipeline for {commit_hash} finished {flow_result}!"
     if error:
         message = f"{message}\n {step_with_error} failed!"
@@ -58,5 +46,5 @@ def send_telegram():
 
 
 if __name__ == "__main__":
-    # send_telegram()
-    logger.info(steps)
+    send_telegram()
+
