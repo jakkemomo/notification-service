@@ -24,4 +24,5 @@ def get_emails_from_user_ids(recipients: List) -> Dict:
         logger.error("Bad url for Auth service!")
         return {}
     except requests.exceptions.RequestException as e:
-        raise SystemExit(e)
+        logger.error("Something went wrong while connecting to Auth service!")
+        return {}

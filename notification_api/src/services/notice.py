@@ -66,7 +66,10 @@ class NoticeService:
                 new_notice.dict(by_alias=True)
             )
         except DuplicateKeyError:
-            msg = "Try to create notice with already used type. Doc [%s]." % new_notice.dict(by_alias=True)
+            msg = (
+                "Try to create notice with already used type. Doc [%s]."
+                % new_notice.dict(by_alias=True)
+            )
             logger.info(msg)
             raise DocAlreadyExists(msg=msg)
 
@@ -91,7 +94,10 @@ class NoticeService:
                 {"$set": updated_notice.dict()},
             )
         except DuplicateKeyError:
-            msg = "Try to set notice type with already used value. Doc [%s]." % updated_notice.dict(by_alias=True)
+            msg = (
+                "Try to set notice type with already used value. Doc [%s]."
+                % updated_notice.dict(by_alias=True)
+            )
             logger.info(msg)
             raise DocAlreadyExists(msg=msg)
 

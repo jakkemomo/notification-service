@@ -2,7 +2,7 @@ from typing import List
 
 from pydantic import BaseModel
 
-from .common import ContentType, DeliveryType
+from communication_api.src.models.common import ContentType, DeliveryType
 
 
 class MessageIn(BaseModel):

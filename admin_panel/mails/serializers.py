@@ -1,7 +1,7 @@
 from jinja2 import Environment, TemplateSyntaxError
 from rest_framework import serializers
 
-from .models import MailTemplate
+from admin_panel.mails.models import MailTemplate
 
 
 class MailTemplateSerializer(serializers.ModelSerializer):

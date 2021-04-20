@@ -16,13 +16,17 @@ class MailTemplate(models.Model):
         ]
 
     def __str__(self):
+        """
+        String representation of Template.
+        :return: Name
+        """
         return self.name
 
     def save(self, *args, **kwargs):
         body = self.body
-        env = Environment()
+        env = Environment(autoescape=True)
         try:
             env.parse(body)
         except TemplateSyntaxError:
-            return
+            return None
         super(MailTemplate, self).save()

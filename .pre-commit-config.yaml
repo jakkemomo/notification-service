@@ -16,6 +16,7 @@ repos:
       - id: pyupgrade
         args:
           - --keep-percent-format
+
   - repo: https://github.com/timothycrosley/isort
     # Сортирует импорты
     rev: 5.5.1
