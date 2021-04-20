@@ -1,5 +1,4 @@
 import pathlib
-from os import environ as env
 
 from dotenv import load_dotenv
 from pydantic import BaseSettings, Field
@@ -16,7 +15,7 @@ class RabbitSettings(BaseSettings):
     port: int = Field(5672, env="RABBIT_PORT")
     user: str = Field("user", env="RABBIT_USER")
     pwd: str = Field("password", env="RABBIT_PWD")
-    exchange: str = env.get("EXCHANGE_NAME", "notifications")
+    exchange: str = Field("notifications", env="EXCHANGE_NAME")
 
     def get_uri(self):
         return f"{self.scheme}://{self.host}:{self.port}/"
