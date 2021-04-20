@@ -1,5 +1,4 @@
 import asyncio
-from typing import Optional
 
 from fastapi import APIRouter, Depends, Header, WebSocket, status
 from pydantic import BaseModel
@@ -33,7 +32,7 @@ async def send_notification(
 async def websocket_endpoint(
     ws: WebSocket,
     ws_manager: WebsocketManager = Depends(get_websocket_manager),
-    authorization: Optional[str] = Header(None),
+    authorization: str = Header(None),
 ):
     user = await get_websocket_user(authorization)
     if not user:

@@ -53,28 +53,11 @@ def category_per_user_letter():
     week_earlier = (datetime.now() - timedelta(days=7)).timestamp()
     client_ids = get_list_of_clickhouse_records(SQL_USER_IDS.format(week_earlier))
     for client_id in client_ids:
-        error = False
-        views_films = get_list_of_clickhouse_records(
-            SQL_VIEWS.format(client_id, week_earlier)
+        films_ids, ratings_films, reviews_films, views_films = get_user_films(
+            client_id, week_earlier
         )
-        ratings_films = get_list_of_clickhouse_records(
-            SQL_RATINGS.format(client_id, week_earlier)
-        )
-        reviews_films = get_list_of_clickhouse_records(
-            SQL_REVIEWS.format(client_id, week_earlier)
-        )
-        films_ids = set(views_films + ratings_films + reviews_films)
         films = {}
-        for film_id in films_ids:
-            try:
-                r = requests.get(
-                    f"{settings.MOVIE_API_HAND}/v1/film/{film_id}",
-                    headers={"Authorization": "ADMIN"},
-                )
-                films[film_id] = r.json()["title"]
-            except Exception as e:
-                logger.error("Error while sending request to Movie API: %s" % e)
-                error = True
+        error = gather_film_names(films, films_ids)
         if not error and films_ids:
             payload = {
                 "delivery_type": "email",
@@ -99,6 +82,35 @@ def category_per_user_letter():
                 )
             except Exception as e:
                 logger.error("Error while sending request to Notification API: %s" % e)
+
+
+def gather_film_names(films, films_ids):
+    error = False
+    for film_id in films_ids:
+        try:
+            r = requests.get(
+                f"{settings.MOVIE_API_HAND}/v1/film/{film_id}",
+                headers={"Authorization": "ADMIN"},
+            )
+            films[film_id] = r.json()["title"]
+        except Exception as e:
+            logger.error("Error while sending request to Movie API: %s" % e)
+            error = True
+    return error
+
+
+def get_user_films(client_id, week_earlier):
+    views_films = get_list_of_clickhouse_records(
+        SQL_VIEWS.format(client_id, week_earlier)
+    )
+    ratings_films = get_list_of_clickhouse_records(
+        SQL_RATINGS.format(client_id, week_earlier)
+    )
+    reviews_films = get_list_of_clickhouse_records(
+        SQL_REVIEWS.format(client_id, week_earlier)
+    )
+    films_ids = set(views_films + ratings_films + reviews_films)
+    return films_ids, ratings_films, reviews_films, views_films
 
 
 class Command(BaseCommand):
