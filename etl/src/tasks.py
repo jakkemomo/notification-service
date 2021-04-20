@@ -1,7 +1,7 @@
-from etl.celery_app import app
-from etl.models import EmailMessage, MessageIn
-from etl.settings import logger
-from etl.utils.email_queue_utils import (
+from etl.src.celery_app import app
+from etl.src.models import EmailMessage, MessageIn
+from etl.src.settings import logger
+from etl.src.utils.email_queue import (
     enrich_message_with_template_data,
     get_email_addresses_from_ids,
     get_template_data_by_name,

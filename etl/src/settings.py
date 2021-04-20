@@ -6,7 +6,7 @@ from pydantic import BaseSettings, Field
 
 load_dotenv()
 
-BASE_DIR = pathlib.Path(__file__).parent
+BASE_DIR = pathlib.Path(__file__).parent.parent
 DEFAULT_CONFIG_PATH = BASE_DIR / "config" / "etl_config.json"
 logger = logging.getLogger(__name__)
 

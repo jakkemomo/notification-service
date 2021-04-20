@@ -1,0 +1,121 @@
+version: "3.8"
+
+services:
+
+  communication_api:
+    build: communication_api
+    container_name: communication_api
+    command: python3 src/main.py
+    expose:
+      - 8888
+    depends_on:
+      - communication_api_rabbit
+      - notification_api
+      - notification_api_mongodb
+    env_file:
+      - communication_api/src/.env.prod
+
+  communication_api_rabbit:
+    container_name: communication_api_rabbit
+    image: rabbitmq:latest
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    ports:
+      - 5672:5672
+
+  notification_api:
+    build: notification_api
+    container_name: notification_api
+    command: python3 src/main.py
+    expose:
+      - 8000
+    depends_on:
+      - notification_api_mongodb
+    env_file:
+      - notification_api/src/.env.prod
+
+  notification_api_mongodb:
+    image : mongo
+    container_name: notification_api_mongodb
+    env_file:
+      - notification_api/src/.env.prod
+    ports:
+      - 27017:27017
+    restart: unless-stopped
+
+  notification_etl_email_queue:
+    build: etl
+    container_name: notification_etl_email_queue
+    command: celery -A src.tasks worker --loglevel=INFO -Q email -n email
+    depends_on:
+      - communication_api_rabbit
+      - notification_etl_redis
+      - notification-admin-panel
+    restart: always
+    env_file:
+      - etl/src/.env.prod
+
+  notification_etl_websocket_queue:
+    build: etl
+    container_name: notification_etl_websocket_queue
+    command: celery -A src.tasks worker --loglevel=INFO -Q websocket -n websocket
+    depends_on:
+      - communication_api_rabbit
+      - notification_etl_redis
+      - notification-admin-panel
+    restart: always
+    env_file:
+      - etl/src/.env.prod
+
+  notification_etl_redis:
+    container_name: notification_etl_redis
+    image: redis:latest
+    expose:
+      - 6379
+
+  notification-admin-panel:
+    build: admin_panel
+    container_name: notification-admin-panel
+    command: gunicorn config.wsgi:application --bind 0.0.0.0:8899 -w3
+    env_file:
+      - admin_panel/config/settings/.env.prod
+    depends_on:
+      - notification_admin_panel_db
+    volumes:
+      - static_volume:/usr/src/admin_panel/config/static
+
+  notification_admin_panel_db:
+    image: postgres
+    container_name: notification_admin_panel_db
+    volumes:
+      - notification_postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - admin_panel/config/settings/.env.prod
+
+  notification_nginx:
+    build: nginx
+    container_name: notification_nginx
+    ports:
+      - 8000:8000
+      - 8888:8888
+      - 8899:8899
+    depends_on:
+      - notification_api
+      - communication_api
+      - notification-admin-panel
+    volumes:
+      - notification_nginx_logs:/var/log/nginx/
+      - static_volume:/usr/src/admin_panel/config/static
+    restart: always
+
+networks:
+  default:
+    external:
+      name: auth_sprint_2_dotnetwork
+
+volumes:
+  notification_postgres_data:
+  static_volume:
+  notification_nginx_logs:
+    name: notification_nginx_logs

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from admin_panel.mails.models import MailTemplate
+from .models import MailTemplate
 
 
 @admin.register(MailTemplate)

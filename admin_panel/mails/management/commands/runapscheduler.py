@@ -122,9 +122,7 @@ class Command(BaseCommand):
 
         scheduler.add_job(
             category_per_user_letter,
-            trigger=CronTrigger(
-                day_of_week="mon", hour="23", minute="58", second="35"
-            ),  # Midnight on Monday, before start of the next work week.
+            trigger=CronTrigger(day_of_week="tue", hour="18", minute="23", second="00"),
             id="Category per user letter",
             max_instances=1,
             replace_existing=True,

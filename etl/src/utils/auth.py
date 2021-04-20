@@ -2,7 +2,7 @@ from typing import List, Dict
 
 import requests
 
-from etl.settings import settings, logger
+from etl.src.settings import settings, logger
 
 
 def get_emails_from_user_ids(recipients: List) -> Dict:

@@ -14,8 +14,6 @@ class MongoSettings(BaseSettings):
     host: str = Field("localhost", env="MONGO_HOST")
     port: int = Field(27017, env="MONGO_PORT")
     db: str = Field("default", env="MONGO_DB")
-    user: str = Field("user", env="MONGO_USER")
-    pwd: str = Field("password", env="MONGO_PWD")
 
     def get_uri(self):
         return f"{self.scheme}://{self.host}:{self.port}/"

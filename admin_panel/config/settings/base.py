@@ -9,8 +9,8 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
-
 from os import environ as env
+from os import path
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -42,7 +42,7 @@ NOTIFICATION_API_HAND = f"http://{notify_api_host}:{notify_api_port}"
 MOVIE_API_HAND = f"http://{movie_api_host}:{movie_api_port}"
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 
 
 # Quick-start development settings - unsuitable for production
@@ -153,5 +153,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = "/static/"
+STATIC_ROOT = path.join(BASE_DIR, "static")
 
 ITEMS_ON_PAGE = 50

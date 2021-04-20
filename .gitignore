@@ -33,3 +33,7 @@ docs/source/addons
 /etl/.env.prod
 /proxy_app/core/.env.prod
 /ugc_app/config/.env.prod
+/notification_api/src/.env.prod
+/communication_api/src/.env.prod
+/admin_panel/config/settings/.env.prod
+/etl/src/.env.prod

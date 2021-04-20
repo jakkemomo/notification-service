@@ -1,6 +1,6 @@
-psycopg2==2.8.6
+psycopg2-binary==2.8.6
 django==3.1.1
-python-dotenv==0.14.0
+python-dotenv==0.17.0
 gunicorn==20.0.4
 django-apscheduler==0.5.2
 djangorestframework==3.12.4

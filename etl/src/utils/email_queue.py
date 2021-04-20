@@ -1,14 +1,13 @@
 from time import sleep
 from typing import Dict, List
 
-
-from etl.models import MessageIn, EmailMessage
-from etl.settings import logger
-from etl.utils.get_emails import get_emails_from_user_ids
-from etl.utils.get_template import get_template_data
+from etl.src.models import MessageIn, EmailMessage
+from etl.src.settings import logger
+from etl.src.utils.auth import get_emails_from_user_ids
+from etl.src.utils.template_storage import get_template_data
 from template_mailer import render_template
 
-from etl.utils.mailer import send_email
+from etl.src.utils.mailer import send_email
 
 
 def get_email_addresses_from_ids(recipients: List) -> List:
@@ -56,7 +55,6 @@ def send_email_messages(message: EmailMessage, sleep_time: int = 0) -> None:
     :return: None.
     """
     sleep(sleep_time)
-    # todo: abstract
     for recipient in message.recipients:
         send_email(
             recipient=recipient,
