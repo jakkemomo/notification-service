@@ -1,11 +1,12 @@
 import json
 import logging
 import os
+
 import requests
+
 logger = logging.getLogger(__name__)
 
-
-with open('steps.json') as t:
+with open("steps.json") as t:
     steps = json.load(t)
 
 
@@ -20,7 +21,7 @@ def send_telegram():
     project_name = os.getenv("GITHUB_REPOSITORY")
     commit_hash = os.getenv("GITHUB_SHA")
     for step in steps.keys():
-        if not steps[step].get("conclusion") == "success":
+        if steps[step].get("conclusion") != "success":
             flow_result = "with error"
             error = True
             step_with_error = step
@@ -42,9 +43,8 @@ def send_telegram():
     )
 
     if res.status_code != requests.codes.ok:
-        raise ConnectionError("post_text error")
+        raise ConnectionError("Couldn't send request to Telegram!")
 
 
 if __name__ == "__main__":
     send_telegram()
-

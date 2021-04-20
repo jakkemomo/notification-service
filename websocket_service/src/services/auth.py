@@ -115,9 +115,7 @@ def get_token(authorization: str):
     return HTTPAuthorizationCredentials(scheme=scheme, credentials=credentials)
 
 
-async def get_websocket_user(
-    authorization: str,
-) -> Optional[AuthorizedUser]:
+async def get_websocket_user(authorization: str):
     if AUTH_DEBUG:
         debug_claims = {
             "sub": DEBUG_USER_ID,
