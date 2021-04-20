@@ -18,5 +18,5 @@
 
 Для создания очередей в ETL необходимо запустить:
 
-    celery -A etl.tasks worker --loglevel=INFO -Q websocket -n wobsocket
-    celery -A etl.tasks worker --loglevel=INFO -Q email -n email
+
+    celery -A etl.src.tasks worker --loglevel=INFO -Q email -n email & celery -A etl.src.tasks start worker --loglevel=INFO -Q websocket -n websocket

@@ -3,7 +3,7 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-from etl.settings import logger, settings
+from etl.src.settings import logger, settings
 
 config = settings.mail_service
 SENDER = config.sender
@@ -33,4 +33,3 @@ def send_email(recipient: str, subject: str, body_html: str) -> None:
         logger.error("Error: ", e)
     else:
         logger.info("Email sent!")
-

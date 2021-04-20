@@ -1,6 +1,6 @@
 from celery import Celery
 
-from etl.settings import settings
+from etl.src.settings import settings
 
 broker_config = settings.broker
 backend_config = settings.backend
