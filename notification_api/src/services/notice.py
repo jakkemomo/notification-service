@@ -19,24 +19,13 @@ logger = logging.getLogger(__name__)
 
 
 class NoticeService:
-    """
-    Класс для управления уведомлениями.
-    Документ в хранилище MongoDb имеет следующую схему:
-    {
-        type: str
-        name: str
-        description: Optional[str]
-    }
-    - `type`:str: поле отвечающее за тип уведомления, например, "likes", "news", "comments";
-    - `name`:str: название уведомления для отображения пользователю;
-    - `description`:str: подробное описание уведомления для отображения пользователю.
-    """
+    """Класс для управления уведомлениями."""
 
-    COLLECTION_NAME = "notices"
+    collection_name = "notices"
 
     def __init__(self, db: MongoDatabase):
         self.db = db
-        self.collection: MongoCollection = db[self.COLLECTION_NAME]
+        self.collection: MongoCollection = db[self.collection_name]
 
     async def get(self, notice_id: str) -> Optional[Notice]:
         """ Получить информацию о конкретном уведомлении """

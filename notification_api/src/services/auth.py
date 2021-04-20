@@ -34,8 +34,8 @@ class AuthorizedUser:
 
     def _get_permissions(self, roles: dict) -> Set[str]:
         user_permissions = set()
-        for role_name in roles:
-            user_permissions.update(roles[role_name])
+        for permissions in roles.values():
+            user_permissions.update(permissions)
         return user_permissions
 
     def has_permissions(self, *permissions) -> bool:
@@ -72,9 +72,6 @@ async def get_public_key() -> Optional[str]:
                 return None
 
             body = await resp.json()
-            assert (
-                body is not None
-            ), "Something goes wrong, body must contain `public_key` value"
 
             return body["public_key"]
 
