@@ -1,11 +1,11 @@
 from enum import Enum
 
 
-class DeliveryType(str, Enum):
-    EMAIL = "email"
-    WEBSOCKET = "websocket"
+class DeliveryType(Enum):
+    email = "email"
+    websocket = "websocket"
 
 
-class ContentType(str, Enum):
-    NEWS = "news"
-    RECOMMENDATION = "recommendation"
+class ContentType(Enum):
+    news = "news"
+    recommendation = "recommendation"
