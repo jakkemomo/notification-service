@@ -16,11 +16,11 @@ logger = logging.getLogger(__name__)
 class HistoryService:
     """ Класс для сохранения истории уведомлений """
 
-    COLLECTION_NAME = "notification_history"
+    collection_name = "notification_history"
 
     def __init__(self, db: MongoDatabase):
         self.db = db
-        self.collection: MongoCollection = db[self.COLLECTION_NAME]
+        self.collection: MongoCollection = db[self.collection_name]
 
     async def add(self, **kwargs):
         """ Сохранить уведомление в истории """

@@ -37,3 +37,4 @@ docs/source/addons
 /communication_api/src/.env.prod
 /admin_panel/config/settings/.env.prod
 /etl/src/.env.prod
+/websocket_service/src/.env.prod

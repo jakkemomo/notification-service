@@ -9,6 +9,14 @@ class MessageIn(BaseModel):
     template_data: dict
 
 
-class EmailMessage(MessageIn):
+class EnrichableMessage(MessageIn):
+    body_html: str
+
+
+class EmailMessage(EnrichableMessage):
     subject: str
     body_html: str
+
+
+class WebsocketMessage(EnrichableMessage):
+    pass

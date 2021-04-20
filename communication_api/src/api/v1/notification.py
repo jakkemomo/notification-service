@@ -21,7 +21,7 @@ async def send_notification(
     history_service: HistoryService = Depends(get_history_service),
 ):
     notification.message.recipients = await filter_recipients(
-        notification.content_type,
+        notification.content_type.value,
         notification.message.recipients,
     )
 

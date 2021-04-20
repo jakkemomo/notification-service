@@ -1,7 +1,7 @@
 from time import sleep
-from typing import Dict, List
+from typing import Dict, List, Optional
 
-from etl.src.models import MessageIn, EmailMessage
+from etl.src.models import MessageIn, EmailMessage, WebsocketMessage
 from etl.src.settings import logger
 from etl.src.utils.auth import get_emails_from_user_ids
 from etl.src.utils.template_storage import get_template_data
@@ -34,7 +34,7 @@ def get_template_data_by_name(message: MessageIn) -> dict:
         return {}
 
 
-def enrich_message_with_template_data(email_message: EmailMessage):
+def enrich_message_with_template_data(email_message: Optional):
     """
     :param email_message: Message object.
     :return: Message object with enriched values in template variable.

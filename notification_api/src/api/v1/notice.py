@@ -18,8 +18,8 @@ async def get_notice_list(
     notice_service: NoticeService = Depends(get_notice_service),
 ) -> List[NoticeOut]:
     notices = await notice_service.get_all()
-    result = parse_obj_as(List[NoticeOut], notices)
-    return result
+    out_notices = parse_obj_as(List[NoticeOut], notices)
+    return out_notices
 
 
 @notice_api.post("/notice", status_code=status.HTTP_201_CREATED)

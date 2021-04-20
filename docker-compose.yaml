@@ -64,6 +64,7 @@ services:
       - communication_api_rabbit
       - notification_etl_redis
       - notification-admin-panel
+      - websocket_service
     restart: always
     env_file:
       - etl/src/.env.prod
@@ -100,6 +101,7 @@ services:
       - 8000:8000
       - 8888:8888
       - 8899:8899
+      - 9000:9000
     depends_on:
       - notification_api
       - communication_api
@@ -108,6 +110,11 @@ services:
       - notification_nginx_logs:/var/log/nginx/
       - static_volume:/usr/src/admin_panel/config/static
     restart: always
+
+  websocket_service:
+    build: websocket_service
+    container_name: websocket_service
+    command: python3 src/main.py
 
 networks:
   default:

@@ -1,4 +1,4 @@
-"""Модуль с реализацией сервиса для авторизации пользователей"""
+"""Модуль с реализацией методов для авторизации пользователей"""
 
 import logging
 from datetime import datetime
@@ -10,8 +10,9 @@ from authlib.jose import jwt
 from authlib.jose.errors import BadSignatureError, ExpiredTokenError, JoseError
 from fastapi import Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from fastapi.security.utils import get_authorization_scheme_param
 
-from notification_api.src.settings import settings
+from websocket_service.src.settings import settings
 
 AUTH_DEBUG = settings.auth.debug
 DEBUG_USER_ID = settings.auth.debug_user_id
@@ -76,7 +77,7 @@ async def get_public_key() -> Optional[str]:
             return body["public_key"]
 
 
-async def get_user(
+async def get_http_user(
     token: Optional[HTTPAuthorizationCredentials] = Depends(http_bearer),
 ) -> Optional[AuthorizedUser]:
     if AUTH_DEBUG:
@@ -86,6 +87,45 @@ async def get_user(
         }
         return AuthorizedUser(debug_claims)
 
+    if not token:
+        return None
+
+    public_key = await get_public_key()
+    if not public_key:
+        return None
+
+    claims = _decode_token(token.credentials, public_key)
+    if not claims:
+        return None
+
+    return AuthorizedUser(claims)
+
+
+def get_token(authorization: str):
+    if not authorization:
+        return None
+
+    scheme, credentials = get_authorization_scheme_param(authorization)
+    if not (scheme and credentials):
+        return None
+
+    if scheme.lower() != "bearer":
+        return None
+
+    return HTTPAuthorizationCredentials(scheme=scheme, credentials=credentials)
+
+
+async def get_websocket_user(
+    authorization: str,
+) -> Optional[AuthorizedUser]:
+    if AUTH_DEBUG:
+        debug_claims = {
+            "sub": DEBUG_USER_ID,
+            "rls": {},
+        }
+        return AuthorizedUser(debug_claims)
+
+    token = get_token(authorization)
     if not token:
         return None
 
