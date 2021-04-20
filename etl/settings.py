@@ -33,6 +33,12 @@ class BackendSettings(BaseSettings):
     port: int = Field(6380, env="BACKEND_PORT")
 
 
+class WebsocketSettings(BaseSettings):
+    scheme: str = Field("http", env="WEBSOCKET_SCHEME")
+    host: str = Field("localhost", env="WEBSOCKET_HOST")
+    port: int = Field(9000, env="WEBSOCKET_PORT")
+
+
 class CelerySettings(BaseSettings):
     task_routes: dict = {
         "email.*": {"queue": "email"},
@@ -58,6 +64,7 @@ class Settings(BaseSettings):
     broker: BrokerSettings = BrokerSettings()
     backend: BackendSettings = BackendSettings()
     celery: CelerySettings = CelerySettings()
+    websocket: WebsocketSettings = WebsocketSettings()
 
 
 settings = Settings.parse_file(DEFAULT_CONFIG_PATH)

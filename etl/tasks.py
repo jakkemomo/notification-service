@@ -1,5 +1,5 @@
 from etl.celery_app import app
-from etl.models import EmailMessage, MessageIn
+from etl.models import EmailMessage, MessageIn, WebsocketMessage
 from etl.settings import logger
 from etl.utils.email_queue_utils import (
     enrich_message_with_template_data,
@@ -7,6 +7,7 @@ from etl.utils.email_queue_utils import (
     get_template_data_by_name,
     send_email_messages,
 )
+from etl.utils.websocket import send_websocket_messages
 
 
 @app.task(name="email.process_email_query")
@@ -45,3 +46,15 @@ def process_websocket_query(payload: dict) -> None:
     """
     logger.info("Processing Websocket")
     logger.info(payload)
+    message = MessageIn(**payload)
+    template = get_template_data_by_name(message)
+    if not template:
+        logger.error("Couldn't find any templates with given name!")
+        return
+
+    ws_msg = WebsocketMessage(
+        **message.dict(),
+        body_html=template.get("body"),
+    )
+    enrich_message_with_template_data(ws_msg)
+    send_websocket_messages(ws_msg)

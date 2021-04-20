@@ -1,7 +1,7 @@
 from time import sleep
 from typing import Dict, List
 
-from etl.models import MessageIn, EmailMessage
+from etl.models import MessageIn, EmailMessage, EnrichableMessage
 from etl.utils.get_emails import get_emails_from_user_ids
 from etl.utils.get_template import get_template_data
 from template_mailer import render_template
@@ -29,17 +29,17 @@ def get_template_data_by_name(message: MessageIn) -> dict:
     return template_data
 
 
-def enrich_message_with_template_data(email_message: EmailMessage):
+def enrich_message_with_template_data(message: EnrichableMessage):
     """
-    :param email_message: Message object.
+    :param message: Message object.
     :return: Message object with enriched values in template variable.
     """
-    template_data = email_message.template_data
-    template: str = email_message.body_html
+    template_data = message.template_data
+    template: str = message.body_html
 
-    email_message.body_html = render_template(template, template_data)
+    message.body_html = render_template(template, template_data)
 
-    return email_message
+    return message
 
 
 def send_email_messages(message: EmailMessage, sleep_time: int = 0) -> None:
