@@ -38,11 +38,11 @@ class UserNoticeService:
     добавления новых типов уведомлений в документы с настройками пользователей.
     """
 
-    COLLECTION_NAME = "user_notices"
+    collection_name = "user_notices"
 
     def __init__(self, db: MongoDatabase, notice_service: NoticeService):
         self._db = db
-        self._collection: MongoCollection = db[self.COLLECTION_NAME]
+        self._collection: MongoCollection = db[self.collection_name]
         self._notice_service = notice_service
 
     async def activate(self, user_id: str, notice_id: str):
